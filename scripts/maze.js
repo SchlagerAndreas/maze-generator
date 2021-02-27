@@ -1,10 +1,29 @@
 class Maze{
     constructor(width,height){
+        var that = this;
         this.mazeHeight = height;
         this.mazeWidth = width;
+        this.pressedKeys = {};
         this.maze = [];
+        this.player;
         this.mazeContainer = new PIXI.Container();
         this.app;
+
+        this.tickerFun = ()=>{this.gameLoop()};
+
+
+        this.templELKeyDown = function(e){that.keysDown(e)};
+        this.templELKeyUp = function(e){that.keysUp(e)};
+        window.addEventListener("keydown", that.templELKeyDown);
+        window.addEventListener("keyup", that.templELKeyUp);
+    }
+
+    keysDown(e){
+        this.pressedKeys[e.keyCode] = true;
+    }
+    
+    keysUp(e){
+        this.pressedKeys[e.keyCode] = false;
     }
 
     setup(){
@@ -70,6 +89,7 @@ class Maze{
 
         this.app.loader.baseUrl = "graphics";
         this.app.loader.add("path","white-tile.png")
+                       .add("player","player.png")
                        .add("wall","black-tile.png");
         this.app.loader.onComplete.add(function(){that.drawMaze()})
         this.app.loader.load();
@@ -163,8 +183,29 @@ class Maze{
             }
         }
         this.app.stage.addChild(this.mazeContainer);
+        this.player = new Player(15,15,this.app.loader.resources["player"].texture,(object1,object2) => {return this.isColiding(object1,object2);})
+        this.app.stage.addChild(this.player);
+
+        this.app.ticker.add(this.tickerFun);
     }
 
+    isColiding(object1,object2){
+        if(object1 != undefined && object2 != undefined){
+            var rec1 = object1.getBounds();
+            var rec2 = object2.getBounds();
+            return rec1.contains(rec2.x,rec2.y) ||
+                   rec1.contains(rec2.x + rec2.width,rec2.y) ||
+                   rec1.contains(rec2.x,rec2.y+rec2.height) ||
+                   rec1.contains(rec2.x + rec2.width, rec2.y + rec2.height);
+        }
+        else{
+            return false;
+        }
+    }
+    
+    gameLoop(){
+        this.player.move(this.pressedKeys,this.mazeContainer)
+    }
 }
 
 class Cell{
