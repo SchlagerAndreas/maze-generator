@@ -1,9 +1,10 @@
 class Maze{
-    constructor(){
-        this.mazeHeight = 3;
-        this.mazeWidth = 3;
+    constructor(width,height){
+        this.mazeHeight = height;
+        this.mazeWidth = width;
         this.maze = [];
-
+        this.mazeContainer = new PIXI.Container();
+        this.app;
     }
 
     setup(){
@@ -20,12 +21,10 @@ class Maze{
     generateMaze(startNode){
         let mazeStack = [];
         mazeStack.unshift(this.maze[0][0])
-        for(let i = 0; i < this.mazeHeight * this.mazeWidth; i++){
+        while(mazeStack.length > 0){
             let curCell = mazeStack[0];
             curCell.visited = true;
             let neighbours = this.getNeighbours(curCell);
-            console.log(curCell)
-            console.log(neighbours)
             if(neighbours.length > 0){
                 let tmp = Math.floor(Math.random() * neighbours.length);
                 let nextCell = this.maze[neighbours[tmp].y][neighbours[tmp].x];
@@ -37,7 +36,6 @@ class Maze{
                 mazeStack.shift();
             }
         }
-        console.log("FINISHED?")
     }
 
 
@@ -57,6 +55,116 @@ class Maze{
         }
         return ret;
     }
+
+    renderMaze(){
+        var that = this;
+        this.app = new PIXI.Application(
+            {
+                width: 1200,
+                height: 750,
+                transparent: true,
+            }
+        );
+        document.querySelector("#mazeDiv").appendChild(this.app.view);
+
+
+        this.app.loader.baseUrl = "graphics";
+        this.app.loader.add("path","white-tile.png")
+                       .add("wall","black-tile.png");
+        this.app.loader.onComplete.add(function(){that.drawMaze()})
+        this.app.loader.load();
+    }
+
+    drawMaze(){
+        for(var y = 0; y < this.mazeHeight; y++){
+            for(var x = 0; x < this.mazeWidth; x++){
+                
+                let tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp.anchor.set(0);
+                tmp.isSolid = true;
+                tmp.x = x * 30;
+                tmp.y = y * 30; 
+                this.mazeContainer.addChild(tmp);
+
+                if(this.maze[y][x].connections.up){
+                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                }
+                else{
+                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp.isSolid = true;
+                }
+                tmp.anchor.set(0);
+                tmp.x = x * 30 + 10;
+                tmp.y = y * 30;
+                this.mazeContainer.addChild(tmp);
+
+                tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp.anchor.set(0);
+                tmp.isSolid = true;
+                tmp.x = x * 30 + 20;
+                tmp.y = y * 30;
+                this.mazeContainer.addChild(tmp);
+
+                if(this.maze[y][x].connections.left){
+                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                }
+                else{
+                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp.isSolid = true;
+                }
+                tmp.anchor.set(0);
+                tmp.x = x * 30;
+                tmp.y = y * 30 + 10;
+                this.mazeContainer.addChild(tmp);
+
+                tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                tmp.anchor.set(0);
+                tmp.x = x * 30 + 10;
+                tmp.y = y * 30 + 10;
+                this.mazeContainer.addChild(tmp);
+
+                if(this.maze[y][x].connections.right){
+                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                }
+                else{
+                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp.isSolid = true;
+                }
+                tmp.anchor.set(0);
+                tmp.x = x * 30 + 20;
+                tmp.y = y * 30 + 10;
+                this.mazeContainer.addChild(tmp);
+
+                tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp.anchor.set(0);
+                tmp.isSolid = true;
+                tmp.x = x * 30;
+                tmp.y = y * 30 + 20;
+                this.mazeContainer.addChild(tmp);
+
+                if(this.maze[y][x].connections.down){
+                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                }
+                else{
+                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp.isSolid = true;
+                }
+                tmp.anchor.set(0);
+                tmp.x = x * 30 + 10;
+                tmp.y = y * 30 + 20;
+                this.mazeContainer.addChild(tmp);
+
+                tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp.anchor.set(0);
+                tmp.isSolid = true;
+                tmp.x = x * 30 + 20;
+                tmp.y = y * 30 + 20;
+                this.mazeContainer.addChild(tmp);
+            }
+        }
+        this.app.stage.addChild(this.mazeContainer);
+    }
+
 }
 
 class Cell{
