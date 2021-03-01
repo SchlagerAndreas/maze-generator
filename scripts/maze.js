@@ -1,10 +1,15 @@
 class Maze{
-    constructor(width,height){
+    constructor(){
         var that = this;
-        this.mazeHeight = height;
-        this.mazeWidth = width;
+        this.mazeHeight = 25;
+        this.mazeWidth = 40;
+        this.generator = new MazeGenerator(this.mazeWidth,this.mazeHeight);
+        this.generator.setup();
+        this.generator.generateMaze();
+        this.renderMaze();
+
         this.pressedKeys = {};
-        this.maze = [];
+
         this.player;
         this.mazeContainer = new PIXI.Container();
         this.app;
@@ -26,55 +31,6 @@ class Maze{
         this.pressedKeys[e.keyCode] = false;
     }
 
-    setup(){
-        for(let y = 0; y < this.mazeHeight; y++){
-            let row = [];
-            for(let x = 0; x < this.mazeWidth; x++){
-                let cell = new Cell(x,y);
-                row.push(cell);
-            }
-            this.maze.push(row);
-        }
-    }
-
-    generateMaze(startNode){
-        let mazeStack = [];
-        mazeStack.unshift(this.maze[0][0])
-        while(mazeStack.length > 0){
-            let curCell = mazeStack[0];
-            curCell.visited = true;
-            let neighbours = this.getNeighbours(curCell);
-            if(neighbours.length > 0){
-                let tmp = Math.floor(Math.random() * neighbours.length);
-                let nextCell = this.maze[neighbours[tmp].y][neighbours[tmp].x];
-                curCell.setConnection(neighbours[tmp].direction);
-                mazeStack.unshift(nextCell);
-                nextCell.setConnection(neighbours[tmp].invDirection);
-            }
-            else{
-                mazeStack.shift();
-            }
-        }
-    }
-
-
-    getNeighbours(cell){
-        let ret = [];
-        if(cell.x + 1 < this.mazeWidth && !this.maze[cell.y][cell.x + 1].visited){
-            ret.push({x: cell.x + 1, y: cell.y, direction: "right", invDirection: "left"});
-        }
-        if(cell.x - 1 >= 0 && !this.maze[cell.y][cell.x - 1].visited){
-            ret.push({x: cell.x - 1, y: cell.y, direction: "left", invDirection: "right"});
-        }
-        if(cell.y + 1 < this.mazeHeight && !this.maze[cell.y + 1][cell.x].visited){
-            ret.push({x: cell.x, y: cell.y +1, direction: "down", invDirection: "up"});
-        }
-        if(cell.y - 1 >= 0 && !this.maze[cell.y - 1][cell.x].visited){
-            ret.push({x: cell.x, y: cell.y - 1, direction: "up", invDirection: "down"});
-        }
-        return ret;
-    }
-
     renderMaze(){
         var that = this;
         this.app = new PIXI.Application(
@@ -90,6 +46,7 @@ class Maze{
         this.app.loader.baseUrl = "graphics";
         this.app.loader.add("path","white-tile.png")
                        .add("player","player.png")
+                       .add("end","red-tile.png")
                        .add("wall","black-tile.png");
         this.app.loader.onComplete.add(function(){that.drawMaze()})
         this.app.loader.load();
@@ -106,7 +63,7 @@ class Maze{
                 tmp.y = y * 30; 
                 this.mazeContainer.addChild(tmp);
 
-                if(this.maze[y][x].connections.up){
+                if(this.generator.maze[y][x].connections.up){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
                 }
                 else{
@@ -125,7 +82,7 @@ class Maze{
                 tmp.y = y * 30;
                 this.mazeContainer.addChild(tmp);
 
-                if(this.maze[y][x].connections.left){
+                if(this.generator.maze[y][x].connections.left){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
                 }
                 else{
@@ -137,13 +94,20 @@ class Maze{
                 tmp.y = y * 30 + 10;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                
+                if(x == this.mazeWidth -1 && y == this.mazeHeight -1){
+                    tmp = new PIXI.Sprite(this.app.loader.resources["end"].texture);
+                    tmp.isEnd = true;
+                }
+                else{
+                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                }
                 tmp.anchor.set(0);
                 tmp.x = x * 30 + 10;
                 tmp.y = y * 30 + 10;
                 this.mazeContainer.addChild(tmp);
 
-                if(this.maze[y][x].connections.right){
+                if(this.generator.maze[y][x].connections.right){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
                 }
                 else{
@@ -162,7 +126,7 @@ class Maze{
                 tmp.y = y * 30 + 20;
                 this.mazeContainer.addChild(tmp);
 
-                if(this.maze[y][x].connections.down){
+                if(this.generator.maze[y][x].connections.down){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
                 }
                 else{
@@ -205,34 +169,5 @@ class Maze{
     
     gameLoop(){
         this.player.move(this.pressedKeys,this.mazeContainer)
-    }
-}
-
-class Cell{
-    constructor(x,y){
-        this.x = x;
-        this.y = y;
-        this.visited = false;
-        this.connections = {
-            up: false,
-            down: false,
-            right: false,
-            left: false
-        }
-    }
-
-    setConnection(direction){
-        if(direction == "up"){
-            this.connections.up = true;
-        }
-        else if(direction == "down"){
-            this.connections.down = true;
-        }
-        else if(direction == "right"){
-            this.connections.right = true;
-        }
-        else if(direction == "left"){
-            this.connections.left = true;
-        }
     }
 }

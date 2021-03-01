@@ -18,7 +18,7 @@ class Player extends PIXI.Sprite{
     move(pressedKeys,map){
         var i = 0;
         //Moving Up
-        if(pressedKeys["87"]){
+        if(pressedKeys["87"] ||pressedKeys["38"]){
             this.y -= this.speed;
             for(i = 0; i < map.children.length; i++){
                 if(map.children[i].isSolid){
@@ -29,7 +29,7 @@ class Player extends PIXI.Sprite{
             }
         }
         //Moving Down
-        if(pressedKeys["83"]){
+        if(pressedKeys["83"]||pressedKeys["40"]){
             this.y += this.speed;
             for(i = 0; i < map.children.length; i++){
                 if(map.children[i].isSolid){
@@ -40,7 +40,7 @@ class Player extends PIXI.Sprite{
             }
         }
         //Moving Right
-        if(pressedKeys["68"]){
+        if(pressedKeys["68"]||pressedKeys["39"]){
             this.x += this.speed;
             for(i = 0; i < map.children.length; i++){
                 if(map.children[i].isSolid){
@@ -51,13 +51,20 @@ class Player extends PIXI.Sprite{
             }
         }
         //Moving Left
-        if(pressedKeys["65"]){
+        if(pressedKeys["65"]||pressedKeys["37"]){
             this.x -= this.speed;
             for(i = 0; i < map.children.length; i++){
                 if(map.children[i].isSolid){
                     if(this.colFkt(map.children[i],this)){
                         this.x = map.children[i].x + 15;
                     }
+                }
+            }
+        }
+        for(i = 0; i < map.children.length; i++){
+            if(map.children[i].isEnd){
+                if(this.colFkt(map.children[i],this)){
+                    console.log("FINISHED MAZE");
                 }
             }
         }
