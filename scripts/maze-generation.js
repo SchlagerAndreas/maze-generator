@@ -1,7 +1,8 @@
 class MazeGenerator{
-    constructor(width,height,methode){
+    constructor(width,height,method){
         this.mazeHeight = height;
         this.mazeWidth = width;
+        this.method = method;
         this.maze = [];
     }
 
@@ -16,7 +17,7 @@ class MazeGenerator{
         }
     }
 
-    generateMaze(method){
+    generateMaze(){
         let mazeStack = [];
         mazeStack.unshift(this.maze[0][0])
         while(mazeStack.length > 0){
