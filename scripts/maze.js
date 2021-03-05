@@ -7,7 +7,7 @@ class Maze{
         this.mazeGenerationMethod;
         this.generator;
 
-        this.themes = ["BlackWhite","Shrub Maze","TestTheme","TestTheme2"];
+        this.themes = ["BlackWhite","Hedge Maze","TestTheme","TestTheme2"];
         this.methods = ["RecursiveDFS","TestMethod","TestMethod2"];
 
         //Screens
@@ -60,6 +60,8 @@ class Maze{
                        .add("genBtn","generate-button.png")
                        .add("select","select.png")
                        .add("shade","shade.png")
+                       .add("bush","bush.png")
+                       .add("dirtpath","path.png")
                        .add("wall","black-tile.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
@@ -200,8 +202,7 @@ class Maze{
                     button.buttonMode = true;
                     button.visible = false;
                     button.on("pointerup",()=>{this.mazeTheme = this.themes[themeID];
-                                               this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (themeID+1);
-                                               console.log(this.mazeTheme)})
+                                               this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (themeID+1);})
                     select.addChild(button);
     
                     text = new PIXI.Text(this.themes[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
@@ -220,8 +221,7 @@ class Maze{
                 button.buttonMode = true;
                 button.visible = false;
                 button.on("pointerup",()=>{this.mazeTheme = this.themes[i];
-                                           this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (i+1);
-                                           console.log(this.mazeTheme)})
+                                           this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (i+1);})
                 select.addChild(button);
 
                 text = new PIXI.Text(this.themes[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
@@ -341,10 +341,12 @@ class Maze{
     }
 
     drawMaze(){ 
+        let wallTexture = this.mazeTheme == "Hedge Maze" ? this.app.loader.resources["bush"].texture : this.app.loader.resources["wall"].texture;
+        let pathTexture = this.mazeTheme == "Hedge Maze" ? this.app.loader.resources["dirtpath"].texture :  this.app.loader.resources["path"].texture;
         this.mazeContainer.sortableChildren = true;
         for(var y = 0; y < this.mazeHeight; y++){
             for(var x = 0; x < this.mazeWidth; x++){
-                let tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                let tmp = new PIXI.Sprite(wallTexture);
                 tmp.anchor.set(0);
                 tmp.isSolid = true;
                 tmp.x = x * 30;
@@ -353,11 +355,11 @@ class Maze{
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.up){
-                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp = new PIXI.Sprite(pathTexture);
                     tmp.isSolid = false;
                 }
                 else{
-                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp = new PIXI.Sprite(wallTexture);
                     tmp.isSolid = true;
                 }
                 tmp.anchor.set(0);
@@ -366,7 +368,7 @@ class Maze{
                 tmp.zIndex = (3*x+1) + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp = new PIXI.Sprite(wallTexture);
                 tmp.anchor.set(0);
                 tmp.isSolid = true;
                 tmp.x = x * 30 + 20;
@@ -375,11 +377,11 @@ class Maze{
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.left){
-                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp = new PIXI.Sprite(pathTexture);
                     tmp.isSolid = false;
                 }
                 else{
-                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp = new PIXI.Sprite(wallTexture);
                     tmp.isSolid = true;
                 }
                 tmp.anchor.set(0);
@@ -394,7 +396,7 @@ class Maze{
                     tmp.isEnd = true;
                 }
                 else{
-                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp = new PIXI.Sprite(pathTexture);
                 }
                 tmp.isSolid = false;
                 tmp.anchor.set(0);
@@ -404,11 +406,11 @@ class Maze{
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.right){
-                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp = new PIXI.Sprite(pathTexture);
                     tmp.isSolid = false;
                 }
                 else{
-                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp = new PIXI.Sprite(wallTexture);
                     tmp.isSolid = true;
                 }
                 tmp.anchor.set(0);
@@ -417,7 +419,7 @@ class Maze{
                 tmp.zIndex = (3*x+2) + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp = new PIXI.Sprite(wallTexture);
                 tmp.anchor.set(0);
                 tmp.isSolid = true;
                 tmp.x = x * 30;
@@ -426,10 +428,10 @@ class Maze{
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.down){
-                    tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp = new PIXI.Sprite(pathTexture);
                 }
                 else{
-                    tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                    tmp = new PIXI.Sprite(wallTexture);
                     tmp.isSolid = true;
                 }
                 tmp.anchor.set(0);
@@ -438,7 +440,7 @@ class Maze{
                 tmp.zIndex = (3*x+1) + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
+                tmp = new PIXI.Sprite(wallTexture);
                 tmp.anchor.set(0);
                 tmp.isSolid = true;
                 tmp.x = x * 30 + 20;
