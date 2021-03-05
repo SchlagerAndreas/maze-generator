@@ -340,19 +340,21 @@ class Maze{
         }
     }
 
-    drawMaze(){
+    drawMaze(){ 
+        this.mazeContainer.sortableChildren = true;
         for(var y = 0; y < this.mazeHeight; y++){
             for(var x = 0; x < this.mazeWidth; x++){
-                
                 let tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
                 tmp.anchor.set(0);
                 tmp.isSolid = true;
                 tmp.x = x * 30;
-                tmp.y = y * 30; 
+                tmp.y = y * 30;
+                tmp.zIndex = 3*x + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.up){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp.isSolid = false;
                 }
                 else{
                     tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
@@ -361,6 +363,7 @@ class Maze{
                 tmp.anchor.set(0);
                 tmp.x = x * 30 + 10;
                 tmp.y = y * 30;
+                tmp.zIndex = (3*x+1) + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
@@ -368,10 +371,12 @@ class Maze{
                 tmp.isSolid = true;
                 tmp.x = x * 30 + 20;
                 tmp.y = y * 30;
+                tmp.zIndex = (3*x+2) + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.left){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp.isSolid = false;
                 }
                 else{
                     tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
@@ -380,6 +385,7 @@ class Maze{
                 tmp.anchor.set(0);
                 tmp.x = x * 30;
                 tmp.y = y * 30 + 10;
+                tmp.zIndex = 3*x + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 
@@ -390,13 +396,16 @@ class Maze{
                 else{
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
                 }
+                tmp.isSolid = false;
                 tmp.anchor.set(0);
                 tmp.x = x * 30 + 10;
                 tmp.y = y * 30 + 10;
+                tmp.zIndex = (3*x+1) + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.right){
                     tmp = new PIXI.Sprite(this.app.loader.resources["path"].texture);
+                    tmp.isSolid = false;
                 }
                 else{
                     tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
@@ -405,6 +414,7 @@ class Maze{
                 tmp.anchor.set(0);
                 tmp.x = x * 30 + 20;
                 tmp.y = y * 30 + 10;
+                tmp.zIndex = (3*x+2) + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
@@ -412,6 +422,7 @@ class Maze{
                 tmp.isSolid = true;
                 tmp.x = x * 30;
                 tmp.y = y * 30 + 20;
+                tmp.zIndex = 3*x + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 if(this.generator.maze[y][x].connections.down){
@@ -424,6 +435,7 @@ class Maze{
                 tmp.anchor.set(0);
                 tmp.x = x * 30 + 10;
                 tmp.y = y * 30 + 20;
+                tmp.zIndex = (3*x+1) + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
                 tmp = new PIXI.Sprite(this.app.loader.resources["wall"].texture);
@@ -431,11 +443,13 @@ class Maze{
                 tmp.isSolid = true;
                 tmp.x = x * 30 + 20;
                 tmp.y = y * 30 + 20;
+                tmp.zIndex = (3*x+2) + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
             }
         }
-        this.mazeContainer.widthTiles = this.mazeWidth;
-        this.mazeContainer.heightTiles = this.mazeHeight;
+        this.mazeContainer.widthTiles = this.mazeWidth * 3;
+        this.mazeContainer.heightTiles = this.mazeHeight * 3;
+        this.mazeContainer.sortChildren();
         this.app.stage.addChild(this.mazeContainer);
         this.player = new Player(15,15,this.app.loader.resources["player"].texture,this.mazeContainer,(object1,object2) => {return this.isColiding(object1,object2);})
         this.app.stage.addChild(this.player);
@@ -459,6 +473,5 @@ class Maze{
     
     gameLoop(){
         this.player.move(this.pressedKeys);
-        document.getElementById("FPS").innerHTML = "FPS: " + Math.round(this.app.ticker.FPS);
     }
 }
