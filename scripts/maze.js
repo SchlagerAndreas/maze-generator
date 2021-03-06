@@ -28,7 +28,7 @@ class Maze{
         );
         document.querySelector("#mazeDiv").appendChild(this.app.view);
 
-        this.tickerFun = ()=>{this.gameLoop()};
+        this.tickerFun = ()=>{this.updateLoop()};
 
 
         this.templELKeyDown = function(e){that.keysDown(e)};
@@ -62,6 +62,7 @@ class Maze{
                        .add("shade","shade.png")
                        .add("bush","bush.png")
                        .add("dirtpath","path.png")
+                       .add("exitBtn","exit-button.png")
                        .add("wall","black-tile.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
@@ -338,6 +339,43 @@ class Maze{
             this.startScreen.y = 75;
             this.app.stage.addChild(this.startScreen);
         }
+        //Pause Screen
+        {
+
+        }
+        //Finish Screen
+        {
+            let background = new PIXI.Graphics();
+            background.beginFill(0xababab);
+            background.drawRect(0, 0, 600, 600);
+            background.endFill();     
+            this.finishScreen.addChild(background);
+
+            let text = new PIXI.Text('Maze finished',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            text.anchor.set(0);
+            text.width = 200;
+            text.height = 50;
+            text.x = 200;
+            text.y = 100;
+            this.finishScreen.addChild(text);
+
+            let button = new PIXI.Sprite(this.app.loader.resources.exitBtn.texture);
+            button.anchor.set(0);
+            button.x = 250;
+            button.y = 450;
+            button.interactive = true;
+            button.buttonMode = true;
+            button.on("pointerup",()=>{this.resetMazeValues()
+                                       this.finishScreen.visible = false;
+                                       this.startScreen.visible = true;})
+            this.finishScreen.addChild(button);
+            this.finishScreen.width = 600;
+            this.finishScreen.height = 600;
+            this.finishScreen.x = 300;
+            this.finishScreen.y = 75;
+            this.finishScreen.visible = false;
+            this.app.stage.addChild(this.finishScreen)
+        }
     }
 
     drawMaze(){ 
@@ -451,12 +489,24 @@ class Maze{
         }
         this.mazeContainer.widthTiles = this.mazeWidth * 3;
         this.mazeContainer.heightTiles = this.mazeHeight * 3;
+        this.mazeContainer.visible = true;
         this.mazeContainer.sortChildren();
         this.app.stage.addChild(this.mazeContainer);
+
         this.player = new Player(15,15,this.app.loader.resources["player"].texture,this.mazeContainer,(object1,object2) => {return this.isColiding(object1,object2);})
         this.app.stage.addChild(this.player);
 
         this.app.ticker.add(this.tickerFun);
+    }
+
+    resetMazeValues(){
+        for(let i = 0; i < this.mazeContainer.children.length; i++){
+            this.mazeContainer.children[i].destroy();
+        }
+        this.mazeContainer = new PIXI.Container();
+        for(var key in this.pressedKeys) {
+            this.pressedKeys[key] = false;
+        }
     }
 
     isColiding(object1,object2){
@@ -473,7 +523,22 @@ class Maze{
         }
     }
     
-    gameLoop(){
-        this.player.move(this.pressedKeys);
+    pauseUpdateLoop(reason){
+        this.app.ticker.remove(this.tickerFun);
+        if(reason == "pause"){
+
+        }
+        else if(reason == "finished"){
+            this.mazeContainer.visible = false;
+            this.player.visible = false;
+            this.finishScreen.visible = true;
+        }
     }
+
+    updateLoop(){
+        if(this.player.move(this.pressedKeys)){
+            this.pauseUpdateLoop("finished");
+        }
+        document.getElementById("FPS").innerHTML = "FPS: " + Math.round(this.app.ticker.FPS);
+    }  
 }

@@ -24,7 +24,7 @@ class Player extends PIXI.Sprite{
         if(this.map.children[tile].isEnd){
             if(this.colFkt(this.map.children[tile],this)){
                 console.log("FINISHED MAZE");
-                return;
+                return true;
             }
         }
         //Moving Up
@@ -127,6 +127,7 @@ class Player extends PIXI.Sprite{
                 }
             }
         }
+        return false;
     }
 
     getTileID(){
