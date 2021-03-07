@@ -18,26 +18,58 @@ class MazeGenerator{
     }
 
     generateMaze(){
-        let mazeStack = [];
-        mazeStack.unshift(this.maze[0][0])
-        while(mazeStack.length > 0){
-            let curCell = mazeStack[0];
-            curCell.visited = true;
-            let neighbours = this.getNeighbours(curCell);
-            if(neighbours.length > 0){
-                let tmp = Math.floor(Math.random() * neighbours.length);
-                let nextCell = this.maze[neighbours[tmp].y][neighbours[tmp].x];
-                curCell.setConnection(neighbours[tmp].direction);
-                mazeStack.unshift(nextCell);
-                nextCell.setConnection(neighbours[tmp].invDirection);
+        if(this.method == "RecursiveDFS"){
+            let mazeStack = [];
+            mazeStack.unshift(this.maze[0][0])
+            while(mazeStack.length > 0){
+                let curCell = mazeStack[0];
+                curCell.visited = true;
+                let neighbours = this.getNotVisitedNeighbours(curCell);
+                if(neighbours.length > 0){
+                    let tmp = Math.floor(Math.random() * neighbours.length);
+                    let nextCell = this.maze[neighbours[tmp].y][neighbours[tmp].x];
+                    curCell.setConnection(neighbours[tmp].direction);
+                    mazeStack.unshift(nextCell);
+                    nextCell.setConnection(neighbours[tmp].invDirection);
+                }
+                else{
+                    mazeStack.shift();
+                }
             }
-            else{
-                mazeStack.shift();
-            }
+        }
+        else if(this.method == "Prims Algorithm"){
+            let neighbours = [];
+            let curCell = this.maze[0][0]
+            do{
+                //console.log(curCell.x,curCell.y)
+                curCell.visited = true;
+                let curNeighbours = this.getNotVisitedNeighbours(curCell);
+                for(let i = 0; i < curNeighbours.length; i++){
+                    if(!neighbours.includes(this.maze[curNeighbours[i].y][curNeighbours[i].x])){
+                        neighbours.push(this.maze[curNeighbours[i].y][curNeighbours[i].x]);
+                    }
+                }
+                if(neighbours.length > 0){
+                    let tmp = Math.floor(Math.random() * neighbours.length);
+                    // console.log(curCell)
+                    curCell = neighbours[tmp];
+                    // console.log(curCell)
+                    neighbours.splice(tmp,1);
+                    curNeighbours = this.getVisitedNeighbours(curCell);
+                    if(curNeighbours.length > 0){
+                        tmp = Math.floor(Math.random() * curNeighbours.length);
+                        curCell.setConnection(curNeighbours[tmp].direction);
+                        // console.log(curNeighbours[tmp].direction)
+                        this.maze[curNeighbours[tmp].y][curNeighbours[tmp].x].setConnection(curNeighbours[tmp].invDirection);
+                    }
+                    // console.log(neighbours.length)
+                    // console.log(JSON.stringify(neighbours));
+                }
+            }while(neighbours.length > 0)
         }
     }
 
-    getNeighbours(cell){
+    getNotVisitedNeighbours(cell){
         let ret = [];
         if(cell.x + 1 < this.mazeWidth && !this.maze[cell.y][cell.x + 1].visited){
             ret.push({x: cell.x + 1, y: cell.y, direction: "right", invDirection: "left"});
@@ -49,6 +81,23 @@ class MazeGenerator{
             ret.push({x: cell.x, y: cell.y +1, direction: "down", invDirection: "up"});
         }
         if(cell.y - 1 >= 0 && !this.maze[cell.y - 1][cell.x].visited){
+            ret.push({x: cell.x, y: cell.y - 1, direction: "up", invDirection: "down"});
+        }
+        return ret;
+    }
+
+    getVisitedNeighbours(cell){
+        let ret = [];
+        if(cell.x + 1 < this.mazeWidth && this.maze[cell.y][cell.x + 1].visited){
+            ret.push({x: cell.x + 1, y: cell.y, direction: "right", invDirection: "left"});
+        }
+        if(cell.x - 1 >= 0 && this.maze[cell.y][cell.x - 1].visited){
+            ret.push({x: cell.x - 1, y: cell.y, direction: "left", invDirection: "right"});
+        }
+        if(cell.y + 1 < this.mazeHeight && this.maze[cell.y + 1][cell.x].visited){
+            ret.push({x: cell.x, y: cell.y +1, direction: "down", invDirection: "up"});
+        }
+        if(cell.y - 1 >= 0 && this.maze[cell.y - 1][cell.x].visited){
             ret.push({x: cell.x, y: cell.y - 1, direction: "up", invDirection: "down"});
         }
         return ret;

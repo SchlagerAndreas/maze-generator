@@ -3,12 +3,12 @@ class Maze{
         var that = this;
         this.mazeHeight = 25;
         this.mazeWidth = 40;
-        this.mazeTheme;
-        this.mazeGenerationMethod;
+        this.mazeTheme = "BlackWhite";
+        this.mazeGenerationMethod = "RecursiveDFS";
         this.generator;
 
         this.themes = ["BlackWhite","Hedge Maze","TestTheme","TestTheme2"];
-        this.methods = ["RecursiveDFS","TestMethod","TestMethod2"];
+        this.methods = ["RecursiveDFS","Prims Algorithm","TestMethod2"];
 
         //Screens
         this.startScreen = new PIXI.Container();
