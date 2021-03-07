@@ -1,5 +1,6 @@
 :root {
-    --body-bg-color: #ababab;
+    --body-bg-color: #555555;
+    --text-color: #eeeeee;
 }
 
 html , body {

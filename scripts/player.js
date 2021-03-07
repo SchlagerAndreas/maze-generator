@@ -23,7 +23,6 @@ class Player extends PIXI.Sprite{
         let leftTile = tile - 1;
         if(this.map.children[tile].isEnd){
             if(this.colFkt(this.map.children[tile],this)){
-                console.log("FINISHED MAZE");
                 return true;
             }
         }

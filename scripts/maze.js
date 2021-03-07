@@ -63,6 +63,7 @@ class Maze{
                        .add("bush","bush.png")
                        .add("dirtpath","path.png")
                        .add("exitBtn","exit-button.png")
+                       .add("retBtn","return-button.png")
                        .add("wall","black-tile.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
@@ -341,6 +342,48 @@ class Maze{
         }
         //Pause Screen
         {
+            let background = new PIXI.Graphics();
+            background.beginFill(0xababab);
+            background.drawRect(0, 0, 600, 600);
+            background.endFill();     
+            this.pauseScreen.addChild(background);
+
+            let text = new PIXI.Text('Pause',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            text.anchor.set(0);
+            text.width = 200;
+            text.height = 50;
+            text.x = 200;
+            text.y = 25;
+            this.pauseScreen.addChild(text);
+
+            let button = new PIXI.Sprite(this.app.loader.resources.retBtn.texture);
+            button.anchor.set(0);
+            button.x = 250;
+            button.y = 250;
+            button.interactive = true;
+            button.buttonMode = true;
+            button.on("pointerup",()=>{this.app.ticker.add(this.tickerFun);
+                                       this.pauseScreen.visible = false;
+                                       this.mazeContainer.visible = true;
+                                       this.player.visible = true;})
+            this.pauseScreen.addChild(button);
+
+            button = new PIXI.Sprite(this.app.loader.resources.exitBtn.texture);
+            button.anchor.set(0);
+            button.x = 250;
+            button.y = 350;
+            button.interactive = true;
+            button.buttonMode = true;
+            button.on("pointerup",()=>{this.resetMazeValues()
+                                       this.pauseScreen.visible = false;
+                                       this.startScreen.visible = true;})
+            this.pauseScreen.addChild(button);
+            this.pauseScreen.width = 600;
+            this.pauseScreen.height = 600;
+            this.pauseScreen.x = 300;
+            this.pauseScreen.y = 75;
+            this.pauseScreen.visible = false;
+            this.app.stage.addChild(this.pauseScreen)
 
         }
         //Finish Screen
@@ -526,7 +569,9 @@ class Maze{
     pauseUpdateLoop(reason){
         this.app.ticker.remove(this.tickerFun);
         if(reason == "pause"){
-
+            this.mazeContainer.visible = false;
+            this.player.visible = false;
+            this.pauseScreen.visible = true;
         }
         else if(reason == "finished"){
             this.mazeContainer.visible = false;
@@ -538,6 +583,9 @@ class Maze{
     updateLoop(){
         if(this.player.move(this.pressedKeys)){
             this.pauseUpdateLoop("finished");
+        }
+        if(this.pressedKeys["27"]){
+            this.pauseUpdateLoop("pause");  
         }
         document.getElementById("FPS").innerHTML = "FPS: " + Math.round(this.app.ticker.FPS);
     }  
