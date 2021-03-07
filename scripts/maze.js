@@ -70,7 +70,7 @@ class Maze{
     }
 
     createScreens(){
-        let fontsize = 100;
+        let textstyle = {fontFamily : 'Arial', fontSize: 100, fill : 0x0a0a0a, align : 'center'}
         //Start Screen
         {
             let background = new PIXI.Graphics();
@@ -79,7 +79,7 @@ class Maze{
             background.endFill();     
             this.startScreen.addChild(background);
 
-            let text = new PIXI.Text('Generate Maze',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            let text = new PIXI.Text('Generate Maze',textstyle)
             text.anchor.set(0);
             text.width = 200;
             text.height = 50;
@@ -87,7 +87,7 @@ class Maze{
             text.y = 25;
             this.startScreen.addChild(text);
 
-            text = new PIXI.Text('Set Size',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            text = new PIXI.Text('Set Size',textstyle)
             text.anchor.set(0);
             text.width = 50;
             text.height = 25;
@@ -95,7 +95,7 @@ class Maze{
             text.y = 150;
             this.startScreen.addChild(text);
 
-            text = new PIXI.Text('Width',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            text = new PIXI.Text('Width',textstyle)
             text.anchor.set(0);
             text.width = 50;
             text.height = 25;
@@ -103,7 +103,7 @@ class Maze{
             text.y = 200;
             this.startScreen.addChild(text);
 
-            text = new PIXI.Text('Height',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            text = new PIXI.Text('Height',textstyle)
             text.anchor.set(0);
             text.width = 50;
             text.height = 25;
@@ -155,7 +155,7 @@ class Maze{
                                        this.startScreen.children[10].text = this.mazeHeight;})
             this.startScreen.addChild(button);
 
-            text = new PIXI.Text('40',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            text = new PIXI.Text('40',textstyle)
             text.anchor.set(0);
             text.width = 50;
             text.height = 25;
@@ -163,7 +163,7 @@ class Maze{
             text.y = 200;
             this.startScreen.addChild(text);
 
-              text = new PIXI.Text('25',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+              text = new PIXI.Text('25',textstyle)
             text.anchor.set(0);
             text.width = 50;
             text.height = 25;
@@ -173,153 +173,92 @@ class Maze{
 
             //Theme Select
             {
-                let select = new PIXI.Container();
-                let button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25)));
-                button.x = 0;
-                button.y = 0;
-                button.usedTexture = "closed";
-                button.interactive = true;
-                button.buttonMode = true;
-                button.on("pointerup",()=>{for(let i = 2; i <= this.startScreen.children[11].children.length - 1;i++){
-                                           this.startScreen.children[11].children[i].visible = !this.startScreen.children[11].children[i].visible;}
-                                           this.startScreen.children[11].children[0].texture = this.startScreen.children[11].children[0].usedTexture == "closed" ? new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,0,100,25)) : new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25));
-                                           this.startScreen.children[11].children[0].usedTexture = this.startScreen.children[11].children[0].usedTexture == "closed" ? "opened" : "closed";
-                                           this.startScreen.children[11].children[1].text = this.startScreen.children[11].children[1].text == "Themes ⯆" ? "Themes ⯅" : "Themes ⯆"})
-                select.addChild(button);
+                // let select = new PIXI.Container();
+                // let button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25)));
+                // button.x = 0;
+                // button.y = 0;
+                // button.usedTexture = "closed";
+                // button.interactive = true;
+                // button.buttonMode = true;
+                // button.on("pointerup",()=>{for(let i = 2; i <= this.startScreen.children[11].children.length - 1;i++){
+                //                            this.startScreen.children[11].children[i].visible = !this.startScreen.children[11].children[i].visible;}
+                //                            this.startScreen.children[11].children[0].texture = this.startScreen.children[11].children[0].usedTexture == "closed" ? new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,0,100,25)) : new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25));
+                //                            this.startScreen.children[11].children[0].usedTexture = this.startScreen.children[11].children[0].usedTexture == "closed" ? "opened" : "closed";
+                //                            this.startScreen.children[11].children[1].text = this.startScreen.children[11].children[1].text == "Themes ⯆" ? "Themes ⯅" : "Themes ⯆"})
+                // select.addChild(button);
 
-                let text = new PIXI.Text('Themes ⯆',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
-                text.width = 80;
-                text.height = 13;
-                text.x = 10;
-                text.y = 6;
-                select.addChild(text);
+                // let text = new PIXI.Text('Themes ⯆',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+                // text.width = 80;
+                // text.height = 13;
+                // text.x = 10;
+                // text.y = 6;
+                // select.addChild(text);
 
-                let i = 0;
-                for(i = 0; i < this.themes.length-1; i++){
-                    let themeID = i;
-                    button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,25,100,25)));
-                    button.x = 0;
-                    button.y = 0 + 25 * (i+1);
-                    button.interactive = true;
-                    button.buttonMode = true;
-                    button.visible = false;
-                    button.on("pointerup",()=>{this.mazeTheme = this.themes[themeID];
-                                               this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (themeID+1);})
-                    select.addChild(button);
+                // let i = 0;
+                // for(i = 0; i < this.themes.length-1; i++){
+                //     let themeID = i;
+                //     button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,25,100,25)));
+                //     button.x = 0;
+                //     button.y = 0 + 25 * (i+1);
+                //     button.interactive = true;
+                //     button.buttonMode = true;
+                //     button.visible = false;
+                //     button.on("pointerup",()=>{this.mazeTheme = this.themes[themeID];
+                //                                this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (themeID+1);
+                //                                for(let i = 2; i <= this.startScreen.children[11].children.length - 1;i++){
+                //                                this.startScreen.children[11].children[i].visible = !this.startScreen.children[11].children[i].visible;}
+                //                                this.startScreen.children[11].children[0].texture = this.startScreen.children[11].children[0].usedTexture == "closed" ? new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,0,100,25)) : new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25));
+                //                                this.startScreen.children[11].children[0].usedTexture = this.startScreen.children[11].children[0].usedTexture == "closed" ? "opened" : "closed";
+                //                                this.startScreen.children[11].children[1].text = this.startScreen.children[11].children[1].text == "Themes ⯆" ? "Themes ⯅" : "Themes ⯆"})
+                //     select.addChild(button);
     
-                    text = new PIXI.Text(this.themes[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
-                    text.width = 80;
-                    text.height = 13;
-                    text.x = 10;
-                    text.y = 6 + 25 * (i+1);
-                    text.visible = false;
-                    select.addChild(text);
-                }
+                //     text = new PIXI.Text(this.themes[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+                //     text.width = 80;
+                //     text.height = 13;
+                //     text.x = 10;
+                //     text.y = 6 + 25 * (i+1);
+                //     text.visible = false;
+                //     select.addChild(text);
+                // }
 
-                button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,50,100,25)));
-                button.x = 0;
-                button.y = 0 + 25 * (i+1);
-                button.interactive = true;
-                button.buttonMode = true;
-                button.visible = false;
-                button.on("pointerup",()=>{this.mazeTheme = this.themes[i];
-                                           this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (i+1);})
-                select.addChild(button);
+                // button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,50,100,25)));
+                // button.x = 0;
+                // button.y = 0 + 25 * (i+1);
+                // button.interactive = true;
+                // button.buttonMode = true;
+                // button.visible = false;
+                // button.on("pointerup",()=>{this.mazeTheme = this.themes[i];
+                //                            this.startScreen.children[11].children[2 * this.themes.length + 2].y = 0 + 25 * (i+1);
+                //                            for(let i = 2; i <= this.startScreen.children[11].children.length - 1;i++){
+                //                            this.startScreen.children[11].children[i].visible = !this.startScreen.children[11].children[i].visible;}
+                //                            this.startScreen.children[11].children[0].texture = this.startScreen.children[11].children[0].usedTexture == "closed" ? new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,0,100,25)) : new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25));
+                //                            this.startScreen.children[11].children[0].usedTexture = this.startScreen.children[11].children[0].usedTexture == "closed" ? "opened" : "closed";
+                //                            this.startScreen.children[11].children[1].text = this.startScreen.children[11].children[1].text == "Themes ⯆" ? "Themes ⯅" : "Themes ⯆"})
+                // select.addChild(button);
 
-                text = new PIXI.Text(this.themes[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
-                text.width = 80;
-                text.height = 13;
-                text.x = 10;
-                text.y = 6 + 25 * (i+1);
-                text.visible = false;
-                select.addChild(text);
+                // text = new PIXI.Text(this.themes[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+                // text.width = 80;
+                // text.height = 13;
+                // text.x = 10;
+                // text.y = 6 + 25 * (i+1);
+                // text.visible = false;
+                // select.addChild(text);
 
-                let shade = new PIXI.Sprite(this.app.loader.resources.shade.texture)
-                shade.x = 0;
-                shade.y = 25;
-                shade.visible = false;
-                select.addChild(shade);
-
+                // let shade = new PIXI.Sprite(this.app.loader.resources.shade.texture)
+                // shade.x = 0;
+                // shade.y = 25;
+                // shade.visible = false;
+                // select.addChild(shade);
+                let select = new Select("Themes",this.themes,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeTheme = this.themes[id]})
                 select.x = 300;
                 select.y = 225;
                 this.startScreen.addChild(select);
             }
             
-            //Method Select
-            {
-                let select = new PIXI.Container();
-                let button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25)));
-                button.x = 0;
-                button.y = 0;
-                button.usedTexture = "closed";
-                button.interactive = true;
-                button.buttonMode = true;
-                button.on("pointerup",()=>{for(let i = 2; i <= this.startScreen.children[12].children.length - 1;i++){
-                                           this.startScreen.children[12].children[i].visible = !this.startScreen.children[12].children[i].visible;}
-                                           this.startScreen.children[12].children[0].texture = this.startScreen.children[12].children[0].usedTexture == "closed" ? new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,0,100,25)) : new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,75,100,25));
-                                           this.startScreen.children[12].children[0].usedTexture = this.startScreen.children[12].children[0].usedTexture == "closed" ? "opened" : "closed";
-                                           this.startScreen.children[12].children[1].text = this.startScreen.children[12].children[1].text == "Method ⯆" ? "Method ⯅" : "Method ⯆"})
-                select.addChild(button);
-
-                let text = new PIXI.Text('Method ⯆',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
-                text.width = 80;
-                text.height = 13;
-                text.x = 10;
-                text.y = 6;
-                select.addChild(text);
-
-                let i = 0;
-                for(i = 0; i < this.methods.length-1; i++){
-                    let themeID = i;
-                    button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,25,100,25)));
-                    button.x = 0;
-                    button.y = 0 + 25 * (i+1);
-                    button.interactive = true;
-                    button.buttonMode = true;
-                    button.visible = false;
-                    button.on("pointerup",()=>{this.mazeGenerationMethod = this.methods[themeID];
-                                               this.startScreen.children[12].children[2 * this.methods.length + 2].y = 0 + 25 * (themeID+1);
-                                               console.log(this.mazeGenerationMethod)})
-                    select.addChild(button);
-    
-                    text = new PIXI.Text(this.methods[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
-                    text.width = 80;
-                    text.height = 13;
-                    text.x = 10;
-                    text.y = 6 + 25 * (i+1);
-                    text.visible = false;
-                    select.addChild(text);
-                }
-
-                button = new PIXI.Sprite(new PIXI.Texture(this.app.loader.resources.select.texture, new PIXI.Rectangle(0,50,100,25)));
-                button.x = 0;
-                button.y = 0 + 25 * (i+1);
-                button.interactive = true;
-                button.buttonMode = true;
-                button.visible = false;
-                button.on("pointerup",()=>{this.mazeGenerationMethod = this.methods[i];
-                                           this.startScreen.children[12].children[2 * this.methods.length + 2].y = 0 + 25 * (i+1);
-                                           console.log(this.mazeGenerationMethod)})
-                select.addChild(button);
-
-                text = new PIXI.Text(this.methods[i],{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
-                text.width = 80;
-                text.height = 13;
-                text.x = 10;
-                text.y = 6 + 25 * (i+1);
-                text.visible = false;
-                select.addChild(text);
-
-                let shade = new PIXI.Sprite(this.app.loader.resources.shade.texture)
-                shade.x = 0;
-                shade.y = 25;
-                shade.visible = false;
-                select.addChild(shade);
-
-                select.x = 450;
-                select.y = 225;
-                this.startScreen.addChild(select);
-            }
+            let select = new Select("Method",this.methods,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeGenerationMethod = this.methods[id]})
+            select.x = 450;
+            select.y = 225;
+            this.startScreen.addChild(select);
 
             button = new PIXI.Sprite(this.app.loader.resources.genBtn.texture);
             button.x = 250;
@@ -348,7 +287,7 @@ class Maze{
             background.endFill();     
             this.pauseScreen.addChild(background);
 
-            let text = new PIXI.Text('Pause',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            let text = new PIXI.Text('Pause',textstyle)
             text.anchor.set(0);
             text.width = 200;
             text.height = 50;
@@ -394,7 +333,7 @@ class Maze{
             background.endFill();     
             this.finishScreen.addChild(background);
 
-            let text = new PIXI.Text('Maze finished',{fontFamily : 'Arial', fontSize: fontsize, fill : 0x0a0a0a, align : 'center'})
+            let text = new PIXI.Text('Maze finished',textstyle)
             text.anchor.set(0);
             text.width = 200;
             text.height = 50;
