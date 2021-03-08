@@ -7,7 +7,7 @@ class Maze{
         this.mazeGenerationMethod = "RecursiveDFS";
         this.generator;
 
-        this.themes = ["BlackWhite","Hedge Maze","TestTheme","TestTheme2"];
+        this.themes = ["BlackWhite","Hedge Maze","Lava Lake"];
         this.methods = ["RecursiveDFS","Prims Algorithm","Wilsons Algorithm"];
 
         //Screens
@@ -64,6 +64,8 @@ class Maze{
                        .add("dirtpath","path.png")
                        .add("exitBtn","exit-button.png")
                        .add("retBtn","return-button.png")
+                       .add("lava","lava.png")
+                       .add("basalt","basalt.png")
                        .add("wall","black-tile.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
@@ -361,8 +363,14 @@ class Maze{
     }
 
     drawMaze(){ 
-        let wallTexture = this.mazeTheme == "Hedge Maze" ? this.app.loader.resources["bush"].texture : this.app.loader.resources["wall"].texture;
-        let pathTexture = this.mazeTheme == "Hedge Maze" ? this.app.loader.resources["dirtpath"].texture :  this.app.loader.resources["path"].texture;
+        let wallTexture;
+        let pathTexture;
+        switch(this.mazeTheme){
+            case "Hedge Maze" : wallTexture = this.app.loader.resources.bush.texture; pathTexture = this.app.loader.resources.dirtpath.texture; break;
+            case "Lava Lake" : wallTexture = this.app.loader.resources.lava.texture; pathTexture = this.app.loader.resources.basalt.texture; break;
+            default : wallTexture = this.app.loader.resources.wall.texture; pathTexture = this.app.loader.resources.path.texture; break;
+        }
+        
         this.mazeContainer.sortableChildren = true;
         for(var y = 0; y < this.mazeHeight; y++){
             for(var x = 0; x < this.mazeWidth; x++){
