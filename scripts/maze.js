@@ -8,7 +8,7 @@ class Maze{
         this.generator;
 
         this.themes = ["BlackWhite","Hedge Maze","TestTheme","TestTheme2"];
-        this.methods = ["RecursiveDFS","Prims Algorithm","TestMethod2"];
+        this.methods = ["RecursiveDFS","Prims Algorithm","Wilsons Algorithm"];
 
         //Screens
         this.startScreen = new PIXI.Container();
