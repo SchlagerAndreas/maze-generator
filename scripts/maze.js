@@ -5,6 +5,7 @@ class Maze{
         this.mazeWidth = 40;
         this.mazeTheme = "BlackWhite";
         this.mazeGenerationMethod = "RecursiveDFS";
+        this.startTime;
         this.generator;
 
         this.themes = ["BlackWhite","Hedge Maze","Lava Lake"];
@@ -55,12 +56,10 @@ class Maze{
                        .add("plBtn","plus-button.png")
                        .add("minBtn","minus-button.png")
                        .add("genBtn","generate-button.png")
+                       .add("exitBtn","exit-button.png")
+                       .add("retBtn","return-button.png")                       
                        .add("select","select.png")
                        .add("shade","shade.png")
-                       .add("exitBtn","exit-button.png")
-                       .add("retBtn","return-button.png")
-                       .add("lava","lava.png")
-                       .add("basalt","basalt.png")
                        .add("hedgeTheme","hedgemaze-theme.png")
                        .add("blackwhiteTheme","blackwhite-theme.png")
                        .add("lavalakeTheme","lavalake-theme.png")
@@ -194,7 +193,8 @@ class Maze{
                                        this.generator = new MazeGenerator(this.mazeWidth,this.mazeHeight,this.mazeGenerationMethod);
                                        this.generator.setup();
                                        this.generator.generateMaze();
-                                       this.drawMaze();})
+                                       this.drawMaze();
+                                       this.startTime = new Date().getTime()})
             this.startScreen.addChild(button);
 
 
@@ -266,6 +266,14 @@ class Maze{
             text.y = 100;
             this.finishScreen.addChild(text);
 
+            text = new PIXI.Text('Your time was XX:XX:XX',textstyle)
+            text.anchor.set(0);
+            text.width = 150;
+            text.height = 25;
+            text.x = 225;
+            text.y = 200;
+            this.finishScreen.addChild(text);
+
             let button = new PIXI.Sprite(this.app.loader.resources.exitBtn.texture);
             button.anchor.set(0);
             button.x = 250;
@@ -312,46 +320,17 @@ class Maze{
         this.mazeContainer.sortableChildren = true;
         for(var y = 0; y < this.mazeHeight; y++){
             for(var x = 0; x < this.mazeWidth; x++){
-                let tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],0);
-                tmp.zIndex = 3*x + 3*y * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-                
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],1);
-                tmp.zIndex = (3*x+1) + 3*y * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],2);
-                tmp.zIndex = (3*x+2) + 3*y * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],3);
-                tmp.zIndex = 3*x + (3*y+1) * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                if(x == this.mazeWidth - 1 && y == this.mazeHeight - 1){
-                    tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],4,true);
+                for(var i = 0; i < 9; i++){
+                    let tmp;
+                    if(x == this.mazeWidth - 1 && y == this.mazeHeight - 1 && i == 4){
+                        tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],4,true);
+                    }
+                    else{
+                        tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],i);
+                    }
+                    tmp.zIndex = 3 * x + (i % 3) + (3 * y + Math.floor(i/3)) * this.mazeWidth * 3
+                    this.mazeContainer.addChild(tmp);
                 }
-                else{
-                    tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],4);
-                }
-                tmp.zIndex = (3*x+1) + (3*y+1) * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],5);
-                tmp.zIndex = (3*x+2) + (3*y+1) * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],6);
-                tmp.zIndex = 3*x + (3*y+2) * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],7);
-                tmp.zIndex = (3*x+1) + (3*y+2) * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
-
-                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],8);
-                tmp.zIndex = (3*x+2) + (3*y+2) * this.mazeWidth * 3;
-                this.mazeContainer.addChild(tmp);
             }
         }
         this.mazeContainer.widthTiles = this.mazeWidth * 3;
@@ -566,6 +545,15 @@ class Maze{
             return false;
         }
     }
+
+    getTime(){
+        let difTime = new Date().getTime() - this.startTime;
+        let hours = Math.floor((difTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        let minutes = Math.floor((difTime % (1000 * 60 * 60)) / (1000 * 60));
+        let seconds = Math.floor((difTime % (1000 * 60)) / 1000);
+
+        this.finishScreen.children[2].text = "Your time was " + (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+    }
     
     pauseUpdateLoop(reason){
         this.app.ticker.remove(this.tickerFun);
@@ -575,6 +563,7 @@ class Maze{
             this.pauseScreen.visible = true;
         }
         else if(reason == "finished"){
+            this.getTime();
             this.mazeContainer.visible = false;
             this.player.visible = false;
             this.finishScreen.visible = true;

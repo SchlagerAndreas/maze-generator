@@ -62,7 +62,6 @@ class MazeGenerator{
             }while(neighbours.length > 0)
         }
         else if(this.method == "Wilsons Algorithm"){
-            console.log("Start")
             this.maze[0][0].visited = true;
             for(let y = 0; y < this.mazeHeight; y++){
                 for(let x = 0; x < this.mazeWidth; x++){
