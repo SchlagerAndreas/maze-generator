@@ -306,46 +306,44 @@ class Maze{
         this.mazeContainer.sortableChildren = true;
         for(var y = 0; y < this.mazeHeight; y++){
             for(var x = 0; x < this.mazeWidth; x++){
-                let tmp = new Tile(textureSheet,this.generator.maze[y][x],0);
+                let tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],0);
                 tmp.zIndex = 3*x + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
                 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],1);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],1);
                 tmp.zIndex = (3*x+1) + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],2);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],2);
                 tmp.zIndex = (3*x+2) + 3*y * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],3);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],3);
                 tmp.zIndex = 3*x + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],4);
-                if(x == this.mazeWidth - 1 && y == this.mazeHeight -1){
-                    tmp.isEnd = true;
-                    var endFlag = new PIXI.Sprite(this.app.loader.resources.endFlag.texture);
-                    endFlag.anchor.set(0);
-                    endFlag.x = x * 30 + 10;
-                    endFlag.y = y * 30 + 10;
+                if(x == this.mazeWidth - 1 && y == this.mazeHeight - 1){
+                    tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],4,true);
+                }
+                else{
+                    tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],4);
                 }
                 tmp.zIndex = (3*x+1) + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],5);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],5);
                 tmp.zIndex = (3*x+2) + (3*y+1) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],6);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],6);
                 tmp.zIndex = 3*x + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],7);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],7);
                 tmp.zIndex = (3*x+1) + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
 
-                tmp = new Tile(textureSheet,this.generator.maze[y][x],8);
+                tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],8);
                 tmp.zIndex = (3*x+2) + (3*y+2) * this.mazeWidth * 3;
                 this.mazeContainer.addChild(tmp);
             }
@@ -589,13 +587,14 @@ class Maze{
 }
 
 class Tile extends PIXI.Container{
-    constructor(textureSheet,cell,tileID){
+    constructor(textureSheet,endFlag,cell,tileID,isEnd = false){
         super();        
         this.x = cell.x * 30 + 10 * (tileID % 3);
         this.y = cell.y * 30 + 10 * Math.floor(tileID / 3);
         this.textures = textureSheet;
+        this.endFlag = endFlag;
         this.id = tileID;
-        this.isEnd = false;
+        this.isEnd = isEnd;
         this.createTile(cell);
     }
 
@@ -865,6 +864,13 @@ class Tile extends PIXI.Container{
                         tmp.rotation = 1/2 * Math.PI
                         tmp.x = 5;
                         tmp.y = 5;
+                        this.addChild(tmp);
+                    }
+                    if(this.isEnd){
+                        tmp = new PIXI.Sprite(this.endFlag);
+                        tmp.anchor.set(0);
+                        tmp.x = 0;
+                        tmp.y = 0;
                         this.addChild(tmp);
                     }
                     break;
