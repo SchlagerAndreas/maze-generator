@@ -51,24 +51,20 @@ class Maze{
     loadGraphics(){
         var that = this;
         this.app.loader.baseUrl = "graphics";
-        this.app.loader.add("path","white-tile.png")
-                       .add("player","player.png")
-                       .add("end","red-tile.png")
-                       .add("greenTile","green-tile.png")
+        this.app.loader.add("player","player.png")
                        .add("plBtn","plus-button.png")
                        .add("minBtn","minus-button.png")
                        .add("genBtn","generate-button.png")
                        .add("select","select.png")
                        .add("shade","shade.png")
-                       .add("bush","bush.png")
-                       .add("dirtpath","path.png")
                        .add("exitBtn","exit-button.png")
                        .add("retBtn","return-button.png")
                        .add("lava","lava.png")
                        .add("basalt","basalt.png")
                        .add("hedgeTheme","hedgemaze-theme.png")
-                       .add("endFlag","endFlag.png")
-                       .add("wall","black-tile.png");
+                       .add("blackwhiteTheme","blackwhite-theme.png")
+                       .add("lavalakeTheme","lavalake-theme.png")
+                       .add("endFlag","endFlag.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
     }
@@ -299,8 +295,18 @@ class Maze{
                     pathTexture[i] = new PIXI.Texture(this.app.loader.resources.hedgeTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
                 }
                 break;
-            case "Lava Lake" : wallTexture = this.app.loader.resources.lava.texture; pathTexture = this.app.loader.resources.basalt.texture; break;
-            default : wallTexture = this.app.loader.resources.wall.texture; pathTexture = this.app.loader.resources.path.texture; break;
+            case "Lava Lake" : 
+                for(let i = 0; i < 2; i++){
+                    wallTexture[i] = new PIXI.Texture(this.app.loader.resources.lavalakeTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
+                    pathTexture[i] = new PIXI.Texture(this.app.loader.resources.lavalakeTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
+                }
+                break;
+            default : 
+                for(let i = 0; i < 2; i++){
+                    wallTexture[i] = new PIXI.Texture(this.app.loader.resources.blackwhiteTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
+                    pathTexture[i] = new PIXI.Texture(this.app.loader.resources.blackwhiteTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
+                }
+                break;
         }
         let textureSheet = this.createTileTextures(wallTexture,pathTexture)
         this.mazeContainer.sortableChildren = true;
