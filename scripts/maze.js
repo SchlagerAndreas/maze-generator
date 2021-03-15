@@ -351,6 +351,7 @@ class Maze{
         this.mazeContainer.heightTiles = this.mazeHeight * 3;
         this.mazeContainer.visible = true;
         this.mazeContainer.sortChildren();
+        this.mazeContainer.cacheAsBitmap = true;
         this.app.stage.addChild(this.mazeContainer);
 
         this.player = new Player(15,15,this.app.loader.resources["player"].texture,this.mazeContainer,(object1,object2) => {return this.isColiding(object1,object2);})

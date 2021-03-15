@@ -23,7 +23,7 @@
         button.on("pointerup",()=>{this.openCloseSelect()})
         this.addChild(button);
 
-        text = new PIXI.Text(this.title + ' ⯆',this.textStyle);
+        text = new PIXI.Text(this.title + ' ▼',this.textStyle);
         text.width = 80;
         text.height = 13;
         text.x = 10;
@@ -86,11 +86,11 @@
          }
          if(this.isOpen){
             //this.children[0].texture = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,75,100,25)));
-            this.children[1].text = this.title + " ⯆"
+            this.children[1].text = this.title + " ▼"
          }
          else{
             //this.children[0].texture = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,0,100,25)));
-            this.children[1].text = this.title + " ⯅"
+            this.children[1].text = this.title + " ▲"
          }
          this.isOpen = !this.isOpen;
      }
