@@ -308,39 +308,42 @@ class Maze{
     }
 
     drawMaze(){ 
-        let wallTexture = [];
-        let pathTexture = [];
+        let textureSheet = {
+            wallTexture : [],
+            pathTexture : [],
+            endTexture : {}
+        };
         switch(this.mazeTheme){
             case "Hedge Maze" : 
                 for(let i = 0; i < 2; i++){
-                    wallTexture[i] = new PIXI.Texture(this.app.loader.resources.hedgeTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
-                    pathTexture[i] = new PIXI.Texture(this.app.loader.resources.hedgeTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
+                    textureSheet.wallTexture[i] = new PIXI.Texture(this.app.loader.resources.hedgeTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
+                    textureSheet.pathTexture[i] = new PIXI.Texture(this.app.loader.resources.hedgeTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
                 }
                 break;
             case "Lava Lake" : 
                 for(let i = 0; i < 2; i++){
-                    wallTexture[i] = new PIXI.Texture(this.app.loader.resources.lavalakeTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
-                    pathTexture[i] = new PIXI.Texture(this.app.loader.resources.lavalakeTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
+                    textureSheet.wallTexture[i] = new PIXI.Texture(this.app.loader.resources.lavalakeTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
+                    textureSheet.pathTexture[i] = new PIXI.Texture(this.app.loader.resources.lavalakeTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
                 }
                 break;
             default : 
                 for(let i = 0; i < 2; i++){
-                    wallTexture[i] = new PIXI.Texture(this.app.loader.resources.blackwhiteTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
-                    pathTexture[i] = new PIXI.Texture(this.app.loader.resources.blackwhiteTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
+                    textureSheet.wallTexture[i] = new PIXI.Texture(this.app.loader.resources.blackwhiteTheme.texture,new PIXI.Rectangle(i*10,10,10,10))
+                    textureSheet.pathTexture[i] = new PIXI.Texture(this.app.loader.resources.blackwhiteTheme.texture,new PIXI.Rectangle(i*10,0,10,10))
                 }
                 break;
         }
-        let textureSheet = this.createTileTextures(wallTexture,pathTexture)
+        textureSheet.endTexture = this.app.loader.resources.endFlag.texture
         this.mazeContainer.sortableChildren = true;
         for(var y = 0; y < this.mazeHeight; y++){
             for(var x = 0; x < this.mazeWidth; x++){
                 for(var i = 0; i < 9; i++){
                     let tmp;
                     if(x == this.mazeWidth - 1 && y == this.mazeHeight - 1 && i == 4){
-                        tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],4,true);
+                        tmp = new Tile(textureSheet,this.generator.maze[y][x],4,true);
                     }
                     else{
-                        tmp = new Tile(textureSheet,this.app.loader.resources.endFlag.texture,this.generator.maze[y][x],i);
+                        tmp = new Tile(textureSheet,this.generator.maze[y][x],i);
                     }
                     tmp.zIndex = 3 * x + (i % 3) + (3 * y + Math.floor(i/3)) * this.mazeWidth * 3
                     this.mazeContainer.addChild(tmp);
@@ -351,189 +354,15 @@ class Maze{
         this.mazeContainer.heightTiles = this.mazeHeight * 3;
         this.mazeContainer.visible = true;
         this.mazeContainer.sortChildren();
+        this.mazeContainer.x = 1200 / 2 - this.mazeWidth * 15;
+        this.mazeContainer.y = 750 / 2 - this.mazeHeight * 15;
         this.mazeContainer.cacheAsBitmap = true;
         this.app.stage.addChild(this.mazeContainer);
 
-        this.player = new Player(15,15,this.app.loader.resources["player"].texture,this.mazeContainer,(object1,object2) => {return this.isColiding(object1,object2);})
+        this.player = new Player( this.mazeContainer.x + 15,this.mazeContainer.y+15,this.app.loader.resources["player"].texture,this.mazeContainer,(object1,object2) => {return this.isColiding(object1,object2);})
         this.app.stage.addChild(this.player);
 
         this.app.ticker.add(this.tickerFun);
-    }
-
-    createTileTextures(wallTextures,pathTextures){
-        let textureSheet = {};
-        let tmp;
-        let baseSpr;
-        let edgeSpr;
-        //Wall Textures
-        {
-            baseSpr = new PIXI.Sprite(wallTextures[0]);
-            baseSpr.anchor.set(0)
-            baseSpr.x = 0;
-            baseSpr.y = 0;
-            //Central
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-                textureSheet.wallCenter = this.app.renderer.generateTexture(tmp);
-            }
-            //Edge
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-
-                edgeSpr = new PIXI.Sprite(wallTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 1/2 * Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-                textureSheet.wallEdge = this.app.renderer.generateTexture(tmp);
-            }
-            //Corner
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-
-                edgeSpr = new PIXI.Sprite(wallTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 1/2 * Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-
-                edgeSpr = new PIXI.Sprite(wallTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-                textureSheet.wallCorner = this.app.renderer.generateTexture(tmp);
-            }
-        }
-        
-        //Path Textures
-        {
-            baseSpr = new PIXI.Sprite(pathTextures[0]);
-            baseSpr.anchor.set(0)
-            baseSpr.x = 0;
-            baseSpr.y = 0;
-            //Central
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-                textureSheet.pathCenter = this.app.renderer.generateTexture(tmp);
-            }
-            //Edge
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 1/2 * Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-                textureSheet.pathEdge = this.app.renderer.generateTexture(tmp);
-            }
-            //Corner
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 3/2 * Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 0;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-                textureSheet.pathCorner = this.app.renderer.generateTexture(tmp);
-            }
-            //Passage
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 0;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation =Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-                textureSheet.pathPassage = this.app.renderer.generateTexture(tmp);
-            }
-            //DeadEnd
-            {
-                tmp = new PIXI.Container();
-                tmp.x = 0;
-                tmp.y = 0;
-                tmp.addChild(baseSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 1/2 * Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-
-                edgeSpr = new PIXI.Sprite(pathTextures[1]);
-                edgeSpr.anchor.set(0);
-                edgeSpr.pivot.set(5,5);
-                edgeSpr.rotation = 3/2 * Math.PI;
-                edgeSpr.x = 5;
-                edgeSpr.y = 5;
-                tmp.addChild(edgeSpr);
-                textureSheet.pathDeadEnd = this.app.renderer.generateTexture(tmp);
-            }
-
-        }
-        return textureSheet;
     }
 
     resetMazeValues(){
@@ -596,12 +425,11 @@ class Maze{
 }
 
 class Tile extends PIXI.Container{
-    constructor(textureSheet,endFlag,cell,tileID,isEnd = false){
+    constructor(textureSheet,cell,tileID,isEnd = false){
         super();        
         this.x = cell.x * 30 + 10 * (tileID % 3);
         this.y = cell.y * 30 + 10 * Math.floor(tileID / 3);
         this.textures = textureSheet;
-        this.endFlag = endFlag;
         this.id = tileID;
         this.isEnd = isEnd;
         this.createTile(cell);
@@ -613,36 +441,27 @@ class Tile extends PIXI.Container{
             case 0:
                 {
                     this.isSolid = true;
+                    tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                    tmp.anchor.set(0);
+                    tmp.x = 0;
+                    tmp.y = 0;
+                    this.addChild(tmp)
                     if(cell.connections.up){
-                        if(cell.connections.left){
-                            tmp = new PIXI.Sprite(this.textures.wallCorner);
-                            tmp.anchor.set(0)
-                            tmp.x = 0;
-                            tmp.y = 0;
-                            this.addChild(tmp)
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.wallEdge);
-                            tmp.anchor.set(0)
-                            tmp.x = 0;
-                            tmp.y = 0;
-                            this.addChild(tmp)
-                        }
-                    }
-                    else if(cell.connections.left){
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
-                        tmp.anchor.set(0)
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 1/2 * Math.PI;
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 1/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
                         this.addChild(tmp)
                     }
-                    else{
-                        tmp = new PIXI.Sprite(this.textures.wallCenter);
-                        tmp.anchor.set(0)
-                        tmp.x = 0;
-                        tmp.y = 0;
+                    if(cell.connections.left){
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
                         this.addChild(tmp)
                     }
                     break;
@@ -651,63 +470,67 @@ class Tile extends PIXI.Container{
                 {
                     if(cell.connections.up){
                         this.isSolid = false;
-                        tmp = new PIXI.Sprite(this.textures.pathPassage);
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[0])
+                        tmp.anchor.set(0); 
+                        tmp.x = 0;
+                        tmp.y = 0;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
                         tmp.anchor.set(0);
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 1/2 * Math.PI;
+                        tmp.pivot.set(5);
+                        tmp.rotation = 1/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 3/2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
                     }
                     else{
                         this.isSolid = true;
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                        tmp.anchor.set(0); 
+                        tmp.x = 0;
+                        tmp.y = 0;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
                         tmp.anchor.set(0);
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 1/2 * Math.PI;
+                        tmp.pivot.set(5);
+                        tmp.rotation = Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
                     }
                     break;
                 }
             case 2:
                 {
                     this.isSolid = true;
+                    tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                    tmp.anchor.set(0);
+                    tmp.x = 0;
+                    tmp.y = 0;
+                    this.addChild(tmp)
                     if(cell.connections.up){
-                        if(cell.connections.right){
-                            tmp = new PIXI.Sprite(this.textures.wallCorner);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = 1/2 * Math.PI;
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp)
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.wallEdge);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = Math.PI;
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp)
-                        }
-                    }
-                    else if(cell.connections.right){
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
-                        tmp.anchor.set(0)
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 1/2 * Math.PI;
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 3/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
                         this.addChild(tmp)
                     }
-                    else{
-                        tmp = new PIXI.Sprite(this.textures.wallCenter);
-                        tmp.anchor.set(0)
-                        tmp.x = 0;
-                        tmp.y = 0;
+                    if(cell.connections.right){
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
                         this.addChild(tmp)
                     }
                     break;
@@ -716,171 +539,93 @@ class Tile extends PIXI.Container{
                 {
                     if(cell.connections.left){
                         this.isSolid = false;
-                        tmp = new PIXI.Sprite(this.textures.pathPassage);
-                        tmp.anchor.set(0);
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[0])
+                        tmp.anchor.set(0); 
                         tmp.x = 0;
                         tmp.y = 0;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
                     }
                     else{
                         this.isSolid = true;
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
-                        tmp.anchor.set(0);
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                        tmp.anchor.set(0); 
                         tmp.x = 0;
                         tmp.y = 0;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 1/2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
                     }
                     break;
                 }
             case 4:
                 {
                     this.isSolid = false;
-                    if(cell.connections.up){
-                        if(cell.connections.right){
-                            if(cell.connections.down){
-                                if(cell.connections.left){
-                                    tmp = new PIXI.Sprite(this.textures.pathCenter);
-                                    tmp.anchor.set(0);
-                                    tmp.x = 0;
-                                    tmp.y = 0;
-                                    this.addChild(tmp);
-                                }
-                                else{
-                                    tmp = new PIXI.Sprite(this.textures.pathEdge);
-                                    tmp.anchor.set(0);
-                                    tmp.x = 0;
-                                    tmp.y = 0;
-                                    this.addChild(tmp);
-                                }
-                            }
-                            else if(cell.connections.left){
-                                tmp = new PIXI.Sprite(this.textures.pathEdge);
-                                tmp.anchor.set(0);
-                                tmp.pivot.set(5,5);
-                                tmp.rotation = 3/2 * Math.PI
-                                tmp.x = 5;
-                                tmp.y = 5;
-                                this.addChild(tmp);
-                            }
-                            else{
-                                tmp = new PIXI.Sprite(this.textures.pathCorner);
-                                tmp.anchor.set(0)
-                                tmp.pivot.set(5,5);
-                                tmp.rotation = 1/2 * Math.PI
-                                tmp.x = 5;
-                                tmp.y = 5;
-                                this.addChild(tmp);
-                            }
-                        }
-                        else if(cell.connections.left){
-                            if(cell.connections.down){
-                                tmp = new PIXI.Sprite(this.textures.pathEdge);
-                                tmp.anchor.set(0);
-                                tmp.pivot.set(5,5);
-                                tmp.rotation =  Math.PI
-                                tmp.x = 5;
-                                tmp.y = 5;
-                                this.addChild(tmp);
-                               
-                            }
-                            else{
-                                tmp = new PIXI.Sprite(this.textures.pathCorner);
-                                tmp.x = 0;
-                                tmp.y = 0;
-                                this.addChild(tmp);
-                                tmp.anchor.set(0);
-                            }
-                        }
-                        else if(cell.connections.down){
-                            tmp = new PIXI.Sprite(this.textures.pathPassage);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = 1/2 * Math.PI
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp);
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.pathDeadEnd);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = Math.PI
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp);
-                        }
-                    }
-                    else if(cell.connections.down){
-                        if(cell.connections.right){
-                            if(cell.connections.left){
-                                tmp = new PIXI.Sprite(this.textures.pathEdge);
-                                tmp.anchor.set(0)
-                                tmp.pivot.set(5,5);
-                                tmp.rotation = 1/2 * Math.PI
-                                tmp.x = 5;
-                                tmp.y = 5;
-                                this.addChild(tmp);
-                            }
-                            else{
-                                tmp = new PIXI.Sprite(this.textures.pathCorner);
-                                tmp.anchor.set(0)
-                                tmp.pivot.set(5,5);
-                                tmp.rotation = Math.PI
-                                tmp.x = 5;
-                                tmp.y = 5;
-                                this.addChild(tmp);
-                            }
-                        }
-                        else if(cell.connections.left){
-                            tmp = new PIXI.Sprite(this.textures.pathCorner);
-                                tmp.anchor.set(0)
-                                tmp.pivot.set(5,5);
-                                tmp.rotation = 3/2 * Math.PI
-                                tmp.x = 5;
-                                tmp.y = 5;
-                                this.addChild(tmp);
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.pathDeadEnd);
-                            tmp.anchor.set(0)
-                            tmp.x = 0;
-                            tmp.y = 0;
-                            this.addChild(tmp);
-                        }
-                    }
-                    else if(cell.connections.right){
-                        if(cell.connections.left){
-                            tmp = new PIXI.Sprite(this.textures.pathPassage);
-                            tmp.anchor.set(0)
-                            tmp.x = 0;
-                            tmp.y = 0;
-                            this.addChild(tmp);
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.pathDeadEnd);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = 3/2*  Math.PI
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp);
-                        }
-                    }
-                    else{
-                        tmp = new PIXI.Sprite(this.textures.pathDeadEnd);
-                        tmp.anchor.set(0)
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 1/2 * Math.PI
+                    tmp = new PIXI.Sprite(this.textures.pathTexture[0])
+                    tmp.anchor.set(0);
+                    tmp.x = 0;
+                    tmp.y = 0;
+                    this.addChild(tmp)
+                    if(!cell.connections.up){
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
+                    }
+                    if(!cell.connections.left){
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 1/2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
+                    }
+                    if(!cell.connections.right){
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 3/2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
+                    }
+                    if(!cell.connections.down){
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
                     }
                     if(this.isEnd){
-                        tmp = new PIXI.Sprite(this.endFlag);
+                        tmp = new PIXI.Sprite(this.textures.endTexture)
                         tmp.anchor.set(0);
                         tmp.x = 0;
                         tmp.y = 0;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
                     }
                     break;
                 }
@@ -888,59 +633,67 @@ class Tile extends PIXI.Container{
                 {
                     if(cell.connections.right){
                         this.isSolid = false;
-                        tmp = new PIXI.Sprite(this.textures.pathPassage);
-                        tmp.anchor.set(0);
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[0])
+                        tmp.anchor.set(0); 
                         tmp.x = 0;
                         tmp.y = 0;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
                     }
                     else{
                         this.isSolid = true;
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                        tmp.anchor.set(0); 
+                        tmp.x = 0;
+                        tmp.y = 0;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
                         tmp.anchor.set(0);
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = Math.PI
+                        tmp.pivot.set(5);
+                        tmp.rotation = 3/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
                     }
                     break;
                 }
             case 6:
                 {
                     this.isSolid = true;
+                    tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                    tmp.anchor.set(0);
+                    tmp.x = 0;
+                    tmp.y = 0;
+                    this.addChild(tmp)
                     if(cell.connections.down){
-                        if(cell.connections.left){
-                            tmp = new PIXI.Sprite(this.textures.wallCorner);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = 3/2 * Math.PI;
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp)
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.wallEdge);
-                            tmp.anchor.set(0);
-                            tmp.x = 0;
-                            tmp.y = 0;
-                            this.addChild(tmp)
-                        }
-                    }
-                    else if(cell.connections.left){
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
-                        tmp.anchor.set(0)
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 3/2 * Math.PI;
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 1/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
                         this.addChild(tmp)
                     }
-                    else{
-                        tmp = new PIXI.Sprite(this.textures.wallCenter);
-                        tmp.anchor.set(0)
-                        tmp.x = 0;
-                        tmp.y = 0;
+                    if(cell.connections.left){
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
                         this.addChild(tmp)
                     }
                     break;
@@ -949,63 +702,67 @@ class Tile extends PIXI.Container{
                 {
                     if(cell.connections.down){
                         this.isSolid = false;
-                        tmp = new PIXI.Sprite(this.textures.pathPassage);
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[0])
+                        tmp.anchor.set(0); 
+                        tmp.x = 0;
+                        tmp.y = 0;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
                         tmp.anchor.set(0);
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 1/2 * Math.PI;
+                        tmp.pivot.set(5);
+                        tmp.rotation = 1/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.pathTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 3/2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
+                        this.addChild(tmp)
                     }
                     else{
                         this.isSolid = true;
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                        tmp.anchor.set(0); 
+                        tmp.x = 0;
+                        tmp.y = 0;
+                        this.addChild(tmp)
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
                         tmp.anchor.set(0);
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 3/2 * Math.PI;
+                        tmp.pivot.set(5);
+                        tmp.rotation = 2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
-                        this.addChild(tmp);
+                        this.addChild(tmp)
                     }
                     break;
                 }
             case 8:
                 {
                     this.isSolid = true;
+                    tmp = new PIXI.Sprite(this.textures.wallTexture[0])
+                    tmp.anchor.set(0);
+                    tmp.x = 0;
+                    tmp.y = 0;
+                    this.addChild(tmp)
                     if(cell.connections.down){
-                        if(cell.connections.right){
-                            tmp = new PIXI.Sprite(this.textures.wallCorner);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = Math.PI;
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp)
-                        }
-                        else{
-                            tmp = new PIXI.Sprite(this.textures.wallEdge);
-                            tmp.anchor.set(0)
-                            tmp.pivot.set(5,5);
-                            tmp.rotation = Math.PI;
-                            tmp.x = 5;
-                            tmp.y = 5;
-                            this.addChild(tmp)
-                        }
-                    }
-                    else if(cell.connections.right){
-                        tmp = new PIXI.Sprite(this.textures.wallEdge);
-                        tmp.anchor.set(0)
-                        tmp.pivot.set(5,5);
-                        tmp.rotation = 3/2 * Math.PI;
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 3/2 * Math.PI 
                         tmp.x = 5;
                         tmp.y = 5;
                         this.addChild(tmp)
                     }
-                    else{
-                        tmp = new PIXI.Sprite(this.textures.wallCenter);
-                        tmp.anchor.set(0)
-                        tmp.x = 0;
-                        tmp.y = 0;
+                    if(cell.connections.right){
+                        tmp = new PIXI.Sprite(this.textures.wallTexture[1])
+                        tmp.anchor.set(0);
+                        tmp.pivot.set(5);
+                        tmp.rotation = 2 * Math.PI 
+                        tmp.x = 5;
+                        tmp.y = 5;
                         this.addChild(tmp)
                     }
                     break;

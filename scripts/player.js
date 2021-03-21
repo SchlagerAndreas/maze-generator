@@ -18,6 +18,7 @@ class Player extends PIXI.Sprite{
     move(pressedKeys){
         var i = 0;
         let tile = this.getTileID();
+        console.log(tile)
         let upLeftTile = tile - this.map.widthTiles - 1;
         let downLeftTile = tile + this.map.widthTiles - 1;
         let leftTile = tile - 1;
@@ -32,21 +33,21 @@ class Player extends PIXI.Sprite{
             for(i = 0; i < 3; i++){
                 if(this.map.children[upLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[upLeftTile+i],this)){
-                        this.y = this.map.children[upLeftTile+i].y + 15;
+                        this.y = this.map.children[upLeftTile+i].y + 15 + this.map.y;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[downLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[downLeftTile+i],this)){
-                        this.y = this.map.children[downLeftTile+i].y + 15;
+                        this.y = this.map.children[downLeftTile+i].y + 15 + this.map.y;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[leftTile+i].isSolid){
                     if(this.colFkt(this.map.children[leftTile+i],this)){
-                        this.y = this.map.children[leftTile+i].y + 15;
+                        this.y = this.map.children[leftTile+i].y + 15 + this.map.y;
                     }
                 }
             }
@@ -57,21 +58,21 @@ class Player extends PIXI.Sprite{
             for(i = 0; i < 3; i++){
                 if(this.map.children[upLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[upLeftTile+i],this)){
-                        this.y = this.map.children[upLeftTile+i].y - 5;
+                        this.y = this.map.children[upLeftTile+i].y - 5 + this.map.y;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[downLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[downLeftTile+i],this)){
-                        this.y = this.map.children[downLeftTile+i].y - 5;
+                        this.y = this.map.children[downLeftTile+i].y - 5 + this.map.y;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[leftTile+i].isSolid){
                     if(this.colFkt(this.map.children[leftTile+i],this)){
-                        this.y = this.map.children[leftTile+i].y - 5;
+                        this.y = this.map.children[leftTile+i].y - 5 + this.map.y;
                     }
                 }
             }
@@ -82,21 +83,21 @@ class Player extends PIXI.Sprite{
             for(i = 0; i < 3; i++){
                 if(this.map.children[upLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[upLeftTile+i],this)){
-                        this.x = this.map.children[upLeftTile+i].x - 5;
+                        this.x = this.map.children[upLeftTile+i].x - 5 + this.map.x;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[downLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[downLeftTile+i],this)){
-                        this.x = this.map.children[downLeftTile+i].x - 5;
+                        this.x = this.map.children[downLeftTile+i].x - 5 + this.map.x;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[leftTile+i].isSolid){
                     if(this.colFkt(this.map.children[leftTile+i],this)){
-                        this.x = this.map.children[leftTile+i].x - 5;
+                        this.x = this.map.children[leftTile+i].x - 5 + this.map.x;
                     }
                 }
             }
@@ -107,21 +108,21 @@ class Player extends PIXI.Sprite{
             for(i = 0; i < 3; i++){
                 if(this.map.children[upLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[upLeftTile+i],this)){
-                        this.x = this.map.children[upLeftTile+i].x + 15;
+                        this.x = this.map.children[upLeftTile+i].x + 15 + this.map.x;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[downLeftTile+i].isSolid){
                     if(this.colFkt(this.map.children[downLeftTile+i],this)){
-                        this.x = this.map.children[downLeftTile+i].x + 15;
+                        this.x = this.map.children[downLeftTile+i].x + 15 + this.map.x;
                     }
                 }
             }
             for(i = 0; i < 3; i++){
                 if(this.map.children[leftTile+i].isSolid){
                     if(this.colFkt(this.map.children[leftTile+i],this)){
-                        this.x = this.map.children[leftTile+i].x + 15;
+                        this.x = this.map.children[leftTile+i].x + 15 + this.map.x;
                     }
                 }
             }
@@ -130,8 +131,8 @@ class Player extends PIXI.Sprite{
     }
 
     getTileID(){
-        let tileX = Math.floor(this.x / 10);
-        let tileY = Math.floor(this.y / 10);
+        let tileX = Math.floor((this.x - this.map.x) / 10);
+        let tileY = Math.floor((this.y - this.map.y) / 10);
         tileY = tileY == this.map.widthTiles ? this.map.widthTiles -1 : tileY;
         tileX = tileX == this.map.widthTiles ? this.map.widthTiles -1 : tileX;
         let tileIndex = tileY * this.map.widthTiles + tileX;
