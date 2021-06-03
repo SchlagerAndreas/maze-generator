@@ -52,7 +52,8 @@ class Maze{
     loadGraphics(){
         var that = this;
         this.app.loader.baseUrl = "graphics";
-        this.app.loader.add("player","player.png")
+        this.app.loader.add('digifitti', 'digiffiti.fnt')
+                       .add("player","player.png")
                        .add("plBtn","plus-button.png")
                        .add("minBtn","minus-button.png")
                        .add("genBtn","generate-button.png")
@@ -64,6 +65,8 @@ class Maze{
                        .add("blackwhiteTheme","blackwhite-theme.png")
                        .add("lavalakeTheme","lavalake-theme.png")
                        .add("background","background.png")
+                       .add("button","button.png")
+                       .add("sBtn","smallButton.png")
                        .add("endFlag","endFlag.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
@@ -71,6 +74,8 @@ class Maze{
 
     createScreens(){
         let textstyle = {fontFamily : 'Arial', fontSize: 100, fill : /*0xdca577*/ 0x83ffa0, align : 'center'}
+        let smallBtnBorder = {top:4,bottom:4,left:8,right:8};
+        let normalButtonBorder = {top:10,bottom:10,left:18,right:18};
         //Start Screen
         {
             let background = new PIXI.Sprite(this.app.loader.resources.background.texture);
@@ -79,87 +84,97 @@ class Maze{
             background.y = 0;
             this.startScreen.addChild(background);
 
-            let text = new PIXI.Text('Generate Maze',textstyle)
+            let text = new PIXI.BitmapText("GENERATE MAZE",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+              });
             text.anchor.set(0);
-            text.width = 200;
+            text.pivot.set(0);
+            text.rotation = Math.PI;
             text.height = 50;
-            text.x = 200;
+            text.width =  200;
             text.y = 25;
+            text.x = 200;
             this.startScreen.addChild(text);
-
 
             let setSize = new PIXI.Container()
 
-            text = new PIXI.Text('Set Size',textstyle);
+            text = new PIXI.BitmapText("SET SIZE",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+              });
             text.anchor.set(0);
-            text.width = 125;
+            text.pivot.set(0);
+            text.rotation = Math.PI;
             text.height = 25;
-            text.x = 50;
+            text.width =  125;
             text.y = 0;
+            text.x = 50;
             setSize.addChild(text);
 
             let option = new PIXI.Container();
 
-            text = new PIXI.Text('Width',textstyle)
+            text = new PIXI.BitmapText("WIDTH",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+              });
             text.anchor.set(0);
-            text.width = 50;
+            text.pivot.set(0);
+            text.rotation = Math.PI;
             text.height = 25;
-            text.x = 0;
+            text.width =  50;
             text.y = 50;
-            option.addChild(text);
-
-            text = new PIXI.Text('Height',textstyle)
-            text.anchor.set(0);
-            text.width = 50;
-            text.height = 25;
             text.x = 0;
-            text.y = 100;
             option.addChild(text);
 
-            let button = new PIXI.Sprite(this.app.loader.resources.minBtn.texture);
-            button.anchor.set(0);
+            text = new PIXI.BitmapText("HEIGHT",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+              });
+            text.anchor.set(0);
+            text.pivot.set(0);
+            text.rotation = Math.PI;
+            text.height = 25;
+            text.width =  50;
+            text.y = 100;
+            text.x = 0;
+            option.addChild(text);
+
+            let button = new Button("-",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeWidth = this.mazeWidth - 1 == 0 ? 40 : this.mazeWidth - 1;
+                                                                                                             this.startScreen.children[2].children[1].children[6].width = this.mazeWidth < 10 ? 25 : 50;
+                                                                                                             this.startScreen.children[2].children[1].children[6].x = this.mazeWidth < 10 ? 145 : 125;
+                                                                                                             this.startScreen.children[2].children[1].children[6].text = this.mazeWidth;})
             button.x = 75;
             button.y = 50;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.mazeWidth = this.mazeWidth - 1 == 0 ? 40 : this.mazeWidth - 1;
-                                       this.startScreen.children[2].children[1].children[6].width = this.mazeWidth < 10 ? 25 : 50;
-                                       this.startScreen.children[2].children[1].children[6].x = this.mazeWidth < 10 ? 145 : 120;
-                                       this.startScreen.children[2].children[1].children[6].text = this.mazeWidth;})
             option.addChild(button);
 
-            button = new PIXI.Sprite(this.app.loader.resources.plBtn.texture);
-            button.anchor.set(0)
+            button = new Button("+",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeWidth = this.mazeWidth + 1 == 41 ? 1 : this.mazeWidth + 1;
+                                                                                                         this.startScreen.children[2].children[1].children[6].width = this.mazeWidth < 10 ? 25 : 50;
+                                                                                                         this.startScreen.children[2].children[1].children[6].x = this.mazeWidth < 10 ? 145 : 125;
+                                                                                                         this.startScreen.children[2].children[1].children[6].text = this.mazeWidth;});
             button.x = 200;
             button.y = 50;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.mazeWidth = this.mazeWidth + 1 == 41 ? 1 : this.mazeWidth + 1;
-                                       this.startScreen.children[2].children[1].children[6].width = this.mazeWidth < 10 ? 25 : 50;
-                                       this.startScreen.children[2].children[1].children[6].x = this.mazeWidth < 10 ? 145 : 120;
-                                       this.startScreen.children[2].children[1].children[6].text = this.mazeWidth;})
             option.addChild(button);
 
-            button = new PIXI.Sprite(this.app.loader.resources.minBtn.texture);
-            button.x = 75;
+
+            button = new Button("-",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeHeight = this.mazeHeight - 1 == 0 ? 25 : this.mazeHeight - 1;
+                                                                                                         this.startScreen.children[2].children[1].children[7].width = this.mazeHeight < 10 ? 25 : 50;
+                                                                                                         this.startScreen.children[2].children[1].children[7].x = this.mazeHeight < 10 ? 145 : 125;
+                                                                                                         this.startScreen.children[2].children[1].children[7].text = this.mazeHeight;});
+            button.x = 75;                              
             button.y = 100;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.mazeHeight = this.mazeHeight - 1 == 0 ? 25 : this.mazeHeight - 1;
-                                       this.startScreen.children[2].children[1].children[7].width = this.mazeHeight < 10 ? 25 : 50;
-                                       this.startScreen.children[2].children[1].children[7].x = this.mazeHeight < 10 ? 145 : 120;
-                                       this.startScreen.children[2].children[1].children[7].text = this.mazeHeight;})
             option.addChild(button);
 
-            button = new PIXI.Sprite(this.app.loader.resources.plBtn.texture);
+            button = new Button("+",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeHeight = this.mazeHeight + 1 == 26 ? 1 : this.mazeHeight + 1;
+                                                                                                         this.startScreen.children[2].children[1].children[7].width = this.mazeHeight < 10 ? 25 : 50;
+                                                                                                         this.startScreen.children[2].children[1].children[7].x = this.mazeHeight < 10 ? 145 : 125;
+                                                                                                         this.startScreen.children[2].children[1].children[7].text = this.mazeHeight;});
             button.x = 200;
             button.y = 100;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.mazeHeight = this.mazeHeight + 1 == 26 ? 1 : this.mazeHeight + 1;
-                                       this.startScreen.children[2].children[1].children[7].width = this.mazeHeight < 10 ? 25 : 50;
-                                       this.startScreen.children[2].children[1].children[7].x = this.mazeHeight < 10 ? 145 : 120;
-                                       this.startScreen.children[2].children[1].children[7].text = this.mazeHeight;})
             option.addChild(button);
 
             text = new PIXI.Text('40',textstyle)
@@ -183,33 +198,26 @@ class Maze{
             setSize.x = 50;
             setSize.y = 150;
             this.startScreen.addChild(setSize);
-
-            //Theme Select
-            {
-                
-                let select = new Select("Themes",this.themes,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeTheme = this.themes[id]})
-                select.x = 300;
-                select.y = 225;
-                this.startScreen.addChild(select);
-            }
+ 
+            let select = new Select("Themes",this.themes,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeTheme = this.themes[id]})
+            select.x = 300;
+            select.y = 225;
+            this.startScreen.addChild(select);
             
-            let select = new Select("Method",this.methods,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeGenerationMethod = this.methods[id]})
+            select = new Select("Method",this.methods,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeGenerationMethod = this.methods[id]})
             select.x = 450;
             select.y = 225;
             this.startScreen.addChild(select);
 
-            button = new PIXI.Sprite(this.app.loader.resources.genBtn.texture);
+            button = new Button("GENERATE",textstyle,this.app.loader.resources.button.texture,normalButtonBorder,()=>{this.startScreen.visible = false;
+                                                                                                      this.generator = new MazeGenerator(this.mazeWidth,this.mazeHeight,this.mazeGenerationMethod);
+                                                                                                      this.generator.setup();
+                                                                                                      this.generator.generateMaze();
+                                                                                                      this.drawMaze();
+                                                                                                      this.startTime = new Date().getTime()});
             button.x = 200;
             button.y = 500;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.startScreen.visible = false;
-                                       this.generator = new MazeGenerator(this.mazeWidth,this.mazeHeight,this.mazeGenerationMethod);
-                                       this.generator.setup();
-                                       this.generator.generateMaze();
-                                       this.drawMaze();
-                                       this.startTime = new Date().getTime()})
-            this.startScreen.addChild(button);
+            this.startScreen.addChild(button)
 
 
             this.startScreen.width = 600;
@@ -226,36 +234,35 @@ class Maze{
             background.y = 0;
             this.pauseScreen.addChild(background);
 
-            let text = new PIXI.Text('Pause',textstyle)
+            let text = new PIXI.BitmapText("PAUSE",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+              });
             text.anchor.set(0);
-            text.width = 200;
+            text.pivot.set(0);
+            text.rotation = Math.PI;
             text.height = 50;
-            text.x = 200;
+            text.width =  200;
             text.y = 25;
+            text.x = 200;
             this.pauseScreen.addChild(text);
 
-            let button = new PIXI.Sprite(this.app.loader.resources.retBtn.texture);
-            button.anchor.set(0);
-            button.x = 250;
+            let button = new Button("RETURN",textstyle,this.app.loader.resources.button.texture,normalButtonBorder,()=>{this.app.ticker.add(this.tickerFun);
+                                                                                                                        this.pauseScreen.visible = false;
+                                                                                                                        this.mazeContainer.visible = true;
+                                                                                                                        this.player.visible = true;});
+            button.x = 200;                                                                                                        
             button.y = 250;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.app.ticker.add(this.tickerFun);
-                                       this.pauseScreen.visible = false;
-                                       this.mazeContainer.visible = true;
-                                       this.player.visible = true;})
-            this.pauseScreen.addChild(button);
-
-            button = new PIXI.Sprite(this.app.loader.resources.exitBtn.texture);
-            button.anchor.set(0);
-            button.x = 250;
+            this.pauseScreen.addChild(button)
+            
+            button = new Button("EXIT",textstyle,this.app.loader.resources.button.texture,normalButtonBorder,()=>{this.resetMazeValues()
+                                                                                                                      this.pauseScreen.visible = false;
+                                                                                                                      this.startScreen.visible = true;});
+            button.x = 200;                                                                                                                                                                                                                 
             button.y = 350;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.resetMazeValues()
-                                       this.pauseScreen.visible = false;
-                                       this.startScreen.visible = true;})
-            this.pauseScreen.addChild(button);
+            this.pauseScreen.addChild(button)
+
             this.pauseScreen.width = 600;
             this.pauseScreen.height = 600;
             this.pauseScreen.x = 300;
@@ -272,32 +279,49 @@ class Maze{
             background.y = 0;
             this.finishScreen.addChild(background);
 
-            let text = new PIXI.Text('Maze finished',textstyle)
+            let text = new PIXI.BitmapText("MAZE FINISHED",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+            });
             text.anchor.set(0);
-            text.width = 200;
+            text.pivot.set(0);
+            text.rotation = Math.PI;
             text.height = 50;
-            text.x = 200;
+            text.width =  200;
             text.y = 100;
+            text.x = 200;
             this.finishScreen.addChild(text);
 
-            text = new PIXI.Text('Your time was XX:XX:XX',textstyle)
+            // text = new PIXI.Text('Your time was XX:XX:XX',textstyle)
+            // text.anchor.set(0);
+            // text.width = 150;
+            // text.height = 25;
+            // text.x = 225;
+            // text.y = 200;
+            // this.finishScreen.addChild(text);
+
+            text = new PIXI.BitmapText("YOUR TIME WAS XX:XX:XX",{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+            });
             text.anchor.set(0);
-            text.width = 150;
-            text.height = 25;
-            text.x = 225;
-            text.y = 200;
+            text.pivot.set(0);
+            text.rotation = Math.PI;
+            text.height = 50;
+            text.width =  300;
+            text.y = 225;
+            text.x = 150;
             this.finishScreen.addChild(text);
 
-            let button = new PIXI.Sprite(this.app.loader.resources.exitBtn.texture);
-            button.anchor.set(0);
-            button.x = 250;
-            button.y = 450;
-            button.interactive = true;
-            button.buttonMode = true;
-            button.on("pointerup",()=>{this.resetMazeValues()
-                                       this.finishScreen.visible = false;
-                                       this.startScreen.visible = true;})
-            this.finishScreen.addChild(button);
+            let button = new Button("EXIT",textstyle,this.app.loader.resources.button.texture,normalButtonBorder,()=>{this.resetMazeValues()
+                                                                                                                      this.finishScreen.visible = false;
+                                                                                                                      this.startScreen.visible = true;});
+            button.x = 200;                                                                                                                                                                                                                 
+            button.y = 350;
+            this.finishScreen.addChild(button)
+
             this.finishScreen.width = 600;
             this.finishScreen.height = 600;
             this.finishScreen.x = 300;
@@ -395,7 +419,7 @@ class Maze{
         let minutes = Math.floor((difTime % (1000 * 60 * 60)) / (1000 * 60));
         let seconds = Math.floor((difTime % (1000 * 60)) / 1000);
 
-        this.finishScreen.children[2].text = "Your time was " + (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        this.finishScreen.children[2].text = "YOUR TIME WAS:  " + (hours < 10 ? "0" + hours : hours) + ": " + (minutes < 10 ? "0" + minutes : minutes) + ": " + (seconds < 10 ? "0" + seconds : seconds);
     }
     
     pauseUpdateLoop(reason){

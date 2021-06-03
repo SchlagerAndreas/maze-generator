@@ -18,7 +18,6 @@ class Player extends PIXI.Sprite{
     move(pressedKeys){
         var i = 0;
         let tile = this.getTileID();
-        console.log(tile)
         let upLeftTile = tile - this.map.widthTiles - 1;
         let downLeftTile = tile + this.map.widthTiles - 1;
         let leftTile = tile - 1;

@@ -95,3 +95,38 @@
          this.isOpen = !this.isOpen;
      }
  }
+
+ class Button extends PIXI.Container{
+    constructor(title,textstyle,texture,btnBorder,onClickFunction){
+        super();
+        this.title = title;
+        this.textstyle = textstyle;
+        this.texture = texture;
+        this.btnBorder = btnBorder;
+        this.cbFct = onClickFunction;
+        this.createButton();
+    }
+    createButton(){
+            let button = new PIXI.Sprite(this.texture);
+            button.anchor.set(0);
+            button.x = button.y = 0;
+            button.interactive = true;
+            button.buttonMode = true;
+            button.on("pointerup",()=>{this.cbFct()});
+            this.addChild(button);
+            
+            let text = new PIXI.BitmapText(this.title,{
+                fontName: "Digiffiti",
+                fontSize: 32,
+                align: "center"
+              });
+            text.anchor.set(0);
+            text.pivot.set(0);
+            text.rotation = Math.PI;
+            text.height = this.texture.height - this.btnBorder.top - this.btnBorder.bottom;
+            text.width =  this.texture.width - this.btnBorder.left - this.btnBorder.right;
+            text.y = this.btnBorder.top;
+            text.x = this.btnBorder.left;
+            this.addChild(text);
+    }
+ }
