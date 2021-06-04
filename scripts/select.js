@@ -15,7 +15,7 @@
         let button;
         let text;
 
-        button = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,75,100,25)));
+        button = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,90,100,30)));
         button.x = 0;
         button.y = 0;
         button.interactive = true;
@@ -25,7 +25,7 @@
 
         text = new PIXI.Text(this.title + ' ▼',this.textStyle);
         text.width = 80;
-        text.height = 13;
+        text.height = 15;
         text.x = 10;
         text.y = 6;
         this.addChild(text);
@@ -33,7 +33,7 @@
         let i = 0;
         for(i = 0; i < this.options.length-1; i++){
             let optionsID = i;
-            button = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,25,100,25)));
+            button = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,30,100,30)));
             button.x = 0;
             button.y = 0 + 25 * (i+1);
             button.interactive = true;
@@ -46,14 +46,14 @@
 
             text = new PIXI.Text(this.options[i],this.textStyle)
             text.width = 80;
-            text.height = 13;
+            text.height = 15;
             text.x = 10;
             text.y = 6 + 25 * (i+1);
             text.visible = false;
             this.addChild(text);
         }
 
-        button = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,50,100,25)));
+        button = new PIXI.Sprite(new PIXI.Texture(this.selectTexture, new PIXI.Rectangle(0,60,100,30)));
         button.x = 0;
         button.y = 0 + 25 * (i+1);
         button.interactive = true;
@@ -67,7 +67,7 @@
 
         text = new PIXI.Text(this.options[i],this.textStyle)
         text.width = 80;
-        text.height = 13;
+        text.height = 15;
         text.x = 10;
         text.y = 6 + 25 * (i+1);
         text.visible = false;

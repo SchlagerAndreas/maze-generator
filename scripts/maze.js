@@ -51,30 +51,25 @@ class Maze{
 
     loadGraphics(){
         var that = this;
-        this.app.loader.baseUrl = "graphics";
-        this.app.loader.add('digifitti', 'digiffiti.fnt')
-                       .add("player","player.png")
-                       .add("plBtn","plus-button.png")
-                       .add("minBtn","minus-button.png")
-                       .add("genBtn","generate-button.png")
-                       .add("exitBtn","exit-button.png")
-                       .add("retBtn","return-button.png")                       
-                       .add("select","select.png")
-                       .add("shade","shade.png")
-                       .add("hedgeTheme","hedgemaze-theme.png")
-                       .add("blackwhiteTheme","blackwhite-theme.png")
-                       .add("lavalakeTheme","lavalake-theme.png")
-                       .add("background","background.png")
-                       .add("button","button.png")
-                       .add("sBtn","smallButton.png")
-                       .add("endFlag","endFlag.png");
+        this.app.loader.baseUrl = "graphics/";
+        this.app.loader.add('digifitti', 'fonts/digiffiti.fnt')
+                       .add("player","other/player.png")      
+                       .add("select","ui/select.png")
+                       .add("shade","ui/shade.png")
+                       .add("hedgeTheme","mazeThemes/hedgemaze-theme.png")
+                       .add("blackwhiteTheme","mazeThemes/blackwhite-theme.png")
+                       .add("lavalakeTheme","mazeThemes/lavalake-theme.png")
+                       .add("background","ui/background.png")
+                       .add("button","ui/button.png")
+                       .add("sBtn","ui/smallButton.png")
+                       .add("endFlag","other/endFlag.png");
         this.app.loader.onComplete.add(function(){that.createScreens()})
         this.app.loader.load();
     }
 
     createScreens(){
         let textstyle = {fontFamily : 'Arial', fontSize: 100, fill : /*0xdca577*/ 0x83ffa0, align : 'center'}
-        let smallBtnBorder = {top:4,bottom:4,left:8,right:8};
+        let smallBtnBorder = {top:8,bottom:8,left:10,right:10};
         let normalButtonBorder = {top:10,bottom:10,left:18,right:18};
         //Start Screen
         {
@@ -84,7 +79,7 @@ class Maze{
             background.y = 0;
             this.startScreen.addChild(background);
 
-            let text = new PIXI.BitmapText("GENERATE MAZE",{
+            let text = new PIXI.BitmapText("G E N E R A T E  M A Z E",{
                 fontName: "Digiffiti",
                 fontSize: 32,
                 align: "center"
@@ -92,10 +87,10 @@ class Maze{
             text.anchor.set(0);
             text.pivot.set(0);
             text.rotation = Math.PI;
-            text.height = 50;
-            text.width =  200;
+            text.height = 75;
+            text.width =  250;
             text.y = 25;
-            text.x = 200;
+            text.x = 175;
             this.startScreen.addChild(text);
 
             let setSize = new PIXI.Container()
@@ -108,10 +103,10 @@ class Maze{
             text.anchor.set(0);
             text.pivot.set(0);
             text.rotation = Math.PI;
-            text.height = 25;
-            text.width =  125;
+            text.height = 40;
+            text.width =  150;
             text.y = 0;
-            text.x = 50;
+            text.x = 25;
             setSize.addChild(text);
 
             let option = new PIXI.Container();
@@ -124,11 +119,43 @@ class Maze{
             text.anchor.set(0);
             text.pivot.set(0);
             text.rotation = Math.PI;
-            text.height = 25;
-            text.width =  50;
-            text.y = 50;
+            text.height = 30;
+            text.width =  80;
+            text.y = 0;
             text.x = 0;
             option.addChild(text);
+
+            let button = new Button("-",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeWidth = this.mazeWidth - 1 == 0 ? 40 : this.mazeWidth - 1;
+                                                                                                                        this.startScreen.children[2].children[1].children[3].width = this.mazeWidth < 10 ? 40 : 80;
+                                                                                                                        this.startScreen.children[2].children[1].children[3].x = this.mazeWidth < 10 ? 170 : 130;
+                                                                                                                        this.startScreen.children[2].children[1].children[3].text = this.mazeWidth;})
+            button.x = 90;
+            button.y = 0;
+            option.addChild(button);
+
+            button = new Button("+",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeWidth = this.mazeWidth + 1 == 41 ? 1 : this.mazeWidth + 1;
+                                                                                                            this.startScreen.children[2].children[1].children[3].width = this.mazeWidth < 10 ? 40 : 80;
+                                                                                                            this.startScreen.children[2].children[1].children[3].x = this.mazeWidth < 10 ? 170 : 130;
+                                                                                                            this.startScreen.children[2].children[1].children[3].text = this.mazeWidth;});
+            button.x = 220;
+            button.y = 0;
+            option.addChild(button);
+
+            text = new PIXI.Text('40',textstyle)
+            text.anchor.set(0);
+            text.width = 80;
+            text.height = 30;
+            text.x = 130;
+            text.y = 0;
+            option.addChild(text);
+
+            option.height = 30;
+            option.width = 200;
+            option.x = 0;
+            option.y = 50;
+            setSize.addChild(option);
+
+            option = new PIXI.Container();
 
             text = new PIXI.BitmapText("HEIGHT",{
                 fontName: "Digiffiti",
@@ -138,75 +165,56 @@ class Maze{
             text.anchor.set(0);
             text.pivot.set(0);
             text.rotation = Math.PI;
-            text.height = 25;
-            text.width =  50;
-            text.y = 100;
+            text.height = 30;
+            text.width =  80;
+            text.y = 0;
             text.x = 0;
             option.addChild(text);
 
-            let button = new Button("-",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeWidth = this.mazeWidth - 1 == 0 ? 40 : this.mazeWidth - 1;
-                                                                                                             this.startScreen.children[2].children[1].children[6].width = this.mazeWidth < 10 ? 25 : 50;
-                                                                                                             this.startScreen.children[2].children[1].children[6].x = this.mazeWidth < 10 ? 145 : 125;
-                                                                                                             this.startScreen.children[2].children[1].children[6].text = this.mazeWidth;})
-            button.x = 75;
-            button.y = 50;
-            option.addChild(button);
-
-            button = new Button("+",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeWidth = this.mazeWidth + 1 == 41 ? 1 : this.mazeWidth + 1;
-                                                                                                         this.startScreen.children[2].children[1].children[6].width = this.mazeWidth < 10 ? 25 : 50;
-                                                                                                         this.startScreen.children[2].children[1].children[6].x = this.mazeWidth < 10 ? 145 : 125;
-                                                                                                         this.startScreen.children[2].children[1].children[6].text = this.mazeWidth;});
-            button.x = 200;
-            button.y = 50;
-            option.addChild(button);
-
-
             button = new Button("-",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeHeight = this.mazeHeight - 1 == 0 ? 25 : this.mazeHeight - 1;
-                                                                                                         this.startScreen.children[2].children[1].children[7].width = this.mazeHeight < 10 ? 25 : 50;
-                                                                                                         this.startScreen.children[2].children[1].children[7].x = this.mazeHeight < 10 ? 145 : 125;
-                                                                                                         this.startScreen.children[2].children[1].children[7].text = this.mazeHeight;});
-            button.x = 75;                              
-            button.y = 100;
+                                                                                                         this.startScreen.children[2].children[2].children[3].width = this.mazeHeight < 10 ? 40 : 80;
+                                                                                                         this.startScreen.children[2].children[2].children[3].x = this.mazeHeight < 10 ? 170 : 130;
+                                                                                                         this.startScreen.children[2].children[2].children[3].text = this.mazeHeight;});
+            button.x = 90;                              
+            button.y = 0;
             option.addChild(button);
 
             button = new Button("+",textstyle,this.app.loader.resources.sBtn.texture,smallBtnBorder,()=>{this.mazeHeight = this.mazeHeight + 1 == 26 ? 1 : this.mazeHeight + 1;
-                                                                                                         this.startScreen.children[2].children[1].children[7].width = this.mazeHeight < 10 ? 25 : 50;
-                                                                                                         this.startScreen.children[2].children[1].children[7].x = this.mazeHeight < 10 ? 145 : 125;
-                                                                                                         this.startScreen.children[2].children[1].children[7].text = this.mazeHeight;});
-            button.x = 200;
-            button.y = 100;
+                                                                                                         this.startScreen.children[2].children[2].children[3].width = this.mazeHeight < 10 ? 40 : 80;
+                                                                                                         this.startScreen.children[2].children[2].children[3].x = this.mazeHeight < 10 ? 170 : 130;
+                                                                                                         this.startScreen.children[2].children[2].children[3].text = this.mazeHeight;});
+            button.x = 220;
+            button.y = 0;
             option.addChild(button);
-
-            text = new PIXI.Text('40',textstyle)
-            text.anchor.set(0);
-            text.width = 50;
-            text.height = 25;
-            text.x = 125;
-            text.y = 50;
-            option.addChild(text);
 
             text = new PIXI.Text('25',textstyle)
             text.anchor.set(0);
-            text.width = 50;
-            text.height = 25;
-            text.x = 125;
-            text.y = 100;
+            text.width = 80;
+            text.height = 30;
+            text.x = 130;
+            text.y = 0;
             option.addChild(text);
 
-            setSize.addChild(option)
-            setSize.width = 225;
+            option.height = 30;
+            option.width = 200;
+            option.x = 0;
+            option.y = 110;
+            setSize.addChild(option);
+
+            setSize.width = 250;
+            setSize.height = 200;
             setSize.x = 50;
             setSize.y = 150;
             this.startScreen.addChild(setSize);
  
             let select = new Select("Themes",this.themes,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeTheme = this.themes[id]})
-            select.x = 300;
-            select.y = 225;
+            select.x = 320;
+            select.y = 270;
             this.startScreen.addChild(select);
             
             select = new Select("Method",this.methods,this.app.loader.resources.select.texture,this.app.loader.resources.shade.texture,textstyle,(id)=>{this.mazeGenerationMethod = this.methods[id]})
-            select.x = 450;
-            select.y = 225;
+            select.x = 470;
+            select.y = 270;
             this.startScreen.addChild(select);
 
             button = new Button("GENERATE",textstyle,this.app.loader.resources.button.texture,normalButtonBorder,()=>{this.startScreen.visible = false;
